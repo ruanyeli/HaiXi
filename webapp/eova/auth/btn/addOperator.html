@@ -1,0 +1,13 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="addOperator()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+function addOperator() {
+		var dialog = parent.sy.modalDialog({
+			id:"mydialog",
+	 		title : '新增算子',
+	 		url : '/eova/auth/addOperator.html',
+	 	},500, 450);
+}
+</script>

@@ -1,0 +1,30 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="checkOperator()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+function checkOperator() {
+	var grid=$('#grid');
+	var row=grid.datagrid('getSelected');
+	if(row==null){
+		$.slideMsg("请选择算子");
+		return;
+	}else{
+		var orid=row.orid;
+		var orname=row.orname;
+		var orstatement=row.orstatement;
+		var stattype=row.stattype;
+		var dialog = parent.sy.modalDialog({
+			id:"mydialog",
+	 		title : '算子取值',
+	 		url : '/eova/auth/checkOperator.html',
+	 		data:{
+	 			"orid":orid,
+	 			"orname":orname,
+	 			"orstatement":orstatement,
+	 			"stattype":stattype
+	 		}
+	 	},400, 260);
+	}
+}
+</script>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>修改算子</title>
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css">
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/ui/js/jquery-1.8.2.min.js"></script>
+<script src="/ui/layer/layer.js" type='text/javascript'></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/ui/easy/easy.js"></script>
+<script type="text/javascript" src="/ui/js/updateOperator.js"></script>
+</head>
+<body>
+<input id="_orid" value='${operator.orid}' type="hidden"/>
+<input id="_orname" value='${operator.orname}' type="hidden"/>
+<input id="_ordepartment" value='${operator.ordepartment}' type="hidden"/>
+<input id="_orstatement" value='${operator.orstatement}' type="hidden"/>
+<input id="_orleft" value='${operator.orleft}' type="hidden"/>
+<input id="_orupper" value='${operator.orupper}' type="hidden"/>
+<input id="_orstagename" value='${operator.orstagename}' type="hidden"/>
+<input id="_orstage" value='${operator.orstage}' type="hidden"/>
+<input id="_statdepartment" value='${operator.statdepartment}' type="hidden"/>
+<input id="_stattype" value='${operator.stattype}' type="hidden"/>
+<input id="_orstastage" value='${operator.orstastage}' type="hidden"/>
+
+<div id="box">
+<div style="height:12px;"></div>
+<form id="updateOperator" method="post">   
+    <div style="height:25px">   
+        <label for="operatorName" style="width:125px;">算子名称:&nbsp;</label>   
+        <input id="operatorName" type="text" name="operatorName" style="width:110px;">   
+       	&nbsp;&nbsp;
+        <label for="ordepartment" id="label_ordepartment" style="width:125px;">所属部门:&nbsp;</label>   
+        <input id="ordepartment" class="easyui-combobox" name="ordepartment" style="height:25px;width:160px;"> 
+    </div> 
+    <br>
+    <div style="height:25px">
+    	<label for="department" id="label_ordepartment" style="width:125px;">原始报表部门:&nbsp;&nbsp;</label>   
+        <input id="department" class="easyui-combobox" name="department" style="height:25px;width:120px;"> 
+        &nbsp;&nbsp;
+        <label for="stattype" style="width:125px;">报表类型:&nbsp;</label>   
+        <input id="stattype" class="easyui-combobox" name="stattype" style="height:25px;width:80px;"> 
+    </div>  
+    <br>
+    <div style="height:25px">
+    	<label for="orstatement" style="width:125px;">&nbsp;&nbsp;&nbsp;&nbsp;原始报表:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>   
+        <input id="orstatement" class="easyui-combobox" name="orstatement" style="height:25px;width:300px;"> 
+    </div>
+    <br>
+    <div style="height:25px" >
+    	<label for="orstagename" style="width:125px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;地区:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>   
+        <input id="orstagename" class="easyui-combobox" name="orstagename" style="height:25px;width:300px;"> 
+    </div>
+    <br>
+    <div style="height:25px">
+    	<label for="orupper" style="width:125px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上表头:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>   
+        <input id="orupper" class="easyui-combobox" name="orupper" style="height:25px;width:300px;"> 
+    </div>
+    <br>
+    <div style="height:25px">
+    	<label for="orleft" style="width:120px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;左表头:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>   
+        <input id="orleft" class="easyui-combobox" name="orleft" style="height:25px;width:300px;"> 
+    </div>
+    <br>
+    <div style="height:25px">
+    	<label for="orstage" style="width:125px;">&nbsp;&nbsp;比较维度:&nbsp;&nbsp;&nbsp;</label>   
+        <input id="orstage" class="easyui-combobox" name="orstage" style="height:25px;width:100px;"> 
+    	&nbsp;&nbsp;
+        <label for="orstastage" style="width:125px;">&nbsp;&nbsp;统计维度:&nbsp;&nbsp;&nbsp;</label>   
+        <input id="orstastage" class="easyui-combobox" name="orstastage" style="height:25px;width:100px;">
+    </div>
+    <br>
+    <br>
+    <div style="text-align:center;padding:5px">
+    	<input type="button" value="提交" onclick="submitForm()"/>
+    	<input type="button" value="取消" onclick="cancelForm()"/>
+    </div>
+</form>  
+</div>
+</body>
+</html>

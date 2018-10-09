@@ -1,0 +1,28 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="showReport()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+
+function showReport(){
+	var grid = $('#grid');
+	var row = grid.datagrid('getSelected');
+	if (row == null) {
+    	$.slideMsg("请选择一条记录！");
+        return;
+    }
+//alert(row.stageid);
+	if (isSelected(row)){
+		var dialog = parent.sy.modalDialog({//打开对话框
+	 		title : '['+ row.depname +'_'+row.staname+']报表查看',
+	 		url : '/diyMenu/showReport?statementid=' + row.statementid+'&'+'stageid='+row.stageid,//传入id和期数id
+	 		buttons : [ {
+	 			text : '确认',
+	 			handler : function() {
+	 				dialog.dialog('destroy');
+	 			}
+	 		} ],
+	 	},document.body.offsetWidth, document.body.offsetHeight);
+	}
+};
+</script>

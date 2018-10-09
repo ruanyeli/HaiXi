@@ -1,0 +1,112 @@
+<!doctype html>
+<html style="height:100%;font-size:14px;">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/gc.spread.views.dataview.10.1.2.css">
+    <script src="/ui/js/gc.spread.common.10.1.2.min.js" type="text/javascript"></script>
+    <script src="/ui/js/gc.spread.views.dataview.10.1.2.min.js" type="text/javascript"></script>
+    <script src="/ui/js/gc.spread.views.gridlayout.10.1.2.min.js" type="text/javascript"></script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+    </style>
+	<script src="/ui/js/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/ui/js/common.js"></script>
+	<script type="text/javascript" src="/ui/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/ui/js/json2-min.js"></script>
+	<script type="text/javascript" src="/ui/js/json2.js"></script>
+</head>
+
+<body style="margin:8px;position:absolute;top:0;bottom:0;left:0;right:0;font-size:14px;">
+    <div id="grid1" style="height:100%;"></div> 
+<script type="text/javascript">
+var statementid=${statementid};
+var stageid=${stageid};
+//alert(statementid);
+//alert(stageid);
+var _datas={
+		"statementid":statementid,
+		"stageid":stageid
+};
+$.ajax({
+    url:'/diyMenu/sendReportData',
+    data:_datas,
+    type:'post',
+    async:false,
+    success:function(response){
+    	//alert(JSON.stringify(response));
+    	console.log(response);
+    	console.log(response.data.dataList);
+    	//console.log(response.data.dataList[2]);
+
+    /* 	for(var i=0;i<response.data.dataList.length;i++){
+    		for(var j=1;j<response.data.columns[0].columns.length;j++){
+    			//console.log(response.data.columns[0].columns[j].id);
+    			//console.log(response.data.dataList[i]);
+    			//console.log(response.data.dataList[i][''+response.data.columns[0].columns[j].id+'']);
+        	}
+    	} */
+    	if(response.resultCode=="0")
+        {
+            var columns=response.data.columns;
+            var _dataList=response.data.dataList;
+            var dataView = new GC.Spread.Views.DataView(document.getElementById('grid1'), _dataList, columns, new GC.Spread.Views.Plugins.GridLayout({
+                allowEditing: true,
+                colMinWidth: 120
+            }));
+            //focus data.view by default
+            document.querySelector('#grid1').focus();
+            dataView.editing.addHandler(function(sender, args) {
+               if (args.status === "endEditing") {
+            	   var idArray=[];
+            	   var oldValueArray=[];
+            	   var newValueArray=[];
+            	   var rowindex;
+            	   var id;
+            	   var oldvalue;
+            	   var newvalue;
+                	for (var key in args.oldItem)
+                    {
+                    	idArray.push(key); 
+                    	oldValueArray.push(args.oldItem[key]);
+                    }
+                	for(var key in args.newItem){
+                    	newValueArray.push(args.newItem[key]);
+                    }
+                	
+                	for(var i=0;i<newValueArray.length;i++){
+                		if(oldValueArray[i]!==newValueArray[i]){
+                 		   rowindex=args.row;
+                 		   id=idArray[i].toString();
+                 		   oldvalue=oldValueArray[i];
+                 		   newvalue=newValueArray[i];
+                           $.ajax({
+                              url:'/diyMenu/updateReportData',
+                               data:{
+                              	"statementid":statementid,
+                              	"stageid":stageid,
+                              	"id":id,
+                              	"newvalue":newvalue,
+                              	"rowindex":rowindex                              	
+                              },
+                              type:'post',
+                              async:false,
+                              success:function(response){
+                              	}
+                              });
+                       	
+                		   break;
+                 		   }           	  
+                    }
+                }
+            });
+        }else{
+            alert(response.resultDesc);
+        }
+    }
+});
+    </script>    
+</body>
+</html>

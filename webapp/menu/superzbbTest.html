@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<pre id="con"></pre>
+</body>
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	var con = document.querySelector("#con");
+    console.oerror = console.error;
+    console.error = function() {
+        //do what u want do;
+        con.innerHTML += "<p>"+ [].join.call(arguments, '') + "</p>";
+        this.oerror.apply(this, arguments);
+    }
+
+    window.onerror =  function(errorMessage, scriptURI, lineNumber) {
+    	console.log(errorMessage);
+    	console.log(scriptURI);
+    	console.log(lineNumber);
+    }
+    
+	$.ajax({ 
+		async:false, 
+		url: 'https://quote.usinsuranceonline.com/HealthShort', // 跨域URL 
+		type: 'GET', 
+		dataType: 'jsonp', 
+		jsonp: 'jsoncallback', //默认callback 
+		//data: [{"id":1}], //请求数据 
+		timeout: 1000, 
+		success: function (json) { //客户端jquery预先定义好的callback函数，成功获取跨域服务器上的json数据后，会动态执行这个callback函数 
+			if(json.actionErrors.length!=0){ 
+			alert(json.actionErrors); 
+			} 
+		}, 
+		complete: function(XMLHttpRequest, textStatus){ 
+		}, 
+		error: function(xhr){ 
+			//jsonp 方式此方法不被触发 
+			//请求出错处理 
+			alert("请求出错(请检查相关度网络状况.)");
+			} 
+		});
+})
+</script>
+</html>

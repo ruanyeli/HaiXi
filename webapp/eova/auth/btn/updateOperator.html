@@ -1,0 +1,21 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="updateOperator()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+function updateOperator() {
+	var grid = $('#grid');
+	var row = grid.datagrid('getSelected');
+	if (row== null) {
+		$.slideMsg("请选择算子");
+        return;
+    }else{
+		var orid=row.orid;
+		var dialog = parent.sy.modalDialog({
+			id:"mydialog",
+	 		title : '修改算子',
+	 		url : '/derive/showOperatorHtml?'+'orid='+orid,
+	 	}, 500, 450);
+    }
+}
+</script>

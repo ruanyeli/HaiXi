@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script src="/ui/js/echarts_option.js" type="text/javascript"></script>
+<script src="/ui/js/echarts-all.js" type="text/javascript"></script>
+<script src="/ui/js/diy/html2canvas.js" type="text/javascript"></script>
+
+</head>
+<body>
+<button type="button" class="btn radius" onclick="downLoad()" name="">下载</button>
+
+<h1 align="center">${title}</h1>
+<h2 align="center"><img id="pic" width="500" height="450"/></h2>
+<script type="text/javascript">
+var picUrl="../image/"+'${picName}'+".png";
+alert(picUrl);
+document.getElementById("pic").src = picUrl;
+function downLoad()
+{
+	//var currentUrl = this.location.href;
+	var currentUrl="http://localhost:8080/menu/index_analysis.html";
+	var picName='${picName}';
+	var title='${title}'
+	$.ajax({
+	    url:'/pdf/CreatePdf',
+	    type:'post',
+	    async:false,
+	    //contentType:"application/json",
+	    data:{
+	    	//"currentUrl":currentUrl,
+	    	"picName":picName,
+	    	"title":title
+	    },
+	    success:function(response){
+	    	alert("ok");
+	    	}
+	    });
+	}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="generateReport()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var generateReport = function(){
+	var grid = $("#grid");
+	var row = grid.datagrid("getSelected");
+	if(row){
+		var dialog = parent.sy.modalDialog({/*  打开一个对话框*/
+			id:"myDialog",
+		 	title : "生成衍生报表", 		
+		 	url : '/report/chooseStage?deid='+row.deid
+		}, 500, 300);
+	}else{
+		$.slideMsg("请选择报表！");
+	}
+};
+</script>

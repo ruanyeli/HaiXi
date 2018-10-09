@@ -1,0 +1,46 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="downloadFile()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+
+function downloadFile(){
+	var fromParam = $("#queryForm").serialize();
+
+	var url = window.location.pathname; 
+	var sear=new RegExp('/JC');
+	var param;
+	if(sear.test(url))
+	{
+	  
+	　　 param = url.substring(url.indexOf('/JC')+1);
+		$.ajax({
+			type:"post",
+			url:"/gridOutput/export/" + param,
+			dataType: "text",
+			data : {fromParam:decodeURIComponent(fromParam,true)}, 
+			success:function(request){
+			if(request == false){
+				$.messager.show({
+                    title: "提示",
+                    msg: "Excel文件下载失败！",
+                    showType: 'slide',
+                    timeout: 2000
+                });
+			}else{
+				$.messager.show({
+                    title: "提示",
+                    msg: "Excel文件下载中...",
+                    showType: 'slide',
+                    timeout: 2000
+                });
+				
+				window.location.href="/excel/downloadExcel/"+request;
+			}
+		}
+	});
+	}
+	
+}
+
+</script>

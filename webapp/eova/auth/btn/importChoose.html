@@ -1,0 +1,27 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="importChoose()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var importChoose = function() {
+	var grid = $('#grid');
+	var row = grid.datagrid('getSelected');
+	if (isSelected(row)){
+		var dialog = parent.sy.modalDialog({/*  打开一个对话框*/
+	 		title :  row.staname,
+	 		url : '/diyEdit/renderExcel/' + row.staid,	 
+	 		 success:function(response){
+	 	    	if(response.resultCode=="0")
+	 	        {
+	 	    		console.log("成功");
+	 	    		dialog.dialog('destroy');
+	 	         }  		
+	 	        else{
+	 	            alert(response.resultDesc);
+	 	        }
+	 	    }
+	 	},500, 500);
+	}
+	
+};
+</script>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>数据导入</title>
+    <meta charset="UTF-8">
+    <link href="/ui/css/common/bootstrap-combined.min.css" rel="stylesheet">
+    <link href="/ui/css/common/layoutit.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/ui/css/common/common.css" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/manageanalysis/manageanalysis.css" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/hui/static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/hui/static/h-ui/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/hui/lib/My97DatePicker/skin/WdatePicker.css"/>
+    <link rel="stylesheet" href="/ui/css/css-loader.css">
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=iso-8859-1">
+</head>
+<body>
+
+
+<div class="text-c">
+    <div class="panel panel-secondary">
+        <div class="panel-body" style="height:30px">       
+                    <input type="hidden" id="result" value="${result}" ></input>
+                    <div style="width:40%;float:left;">
+                        <label style="width:30%;float:left;">请输入年份：</label>
+                        <input type="text" name="end" style="width:100px;float:left;"/>
+                    </div>
+                    <div style="width:40%;float:left;">
+                       <div> <label style="width:20%;float:left;">期名：</label></div>
+                       <input style="width:100px;float:left;" type="text" name="end" id="stage"/>
+                       <button style="float:right;width:70px;height:30px;background:#D1E9E9" type="button" id="upload">确定输入</button>
+                     </div> 
+         </div>    
+    </div>
+    <div class="panel-body" style="height:30px">
+           <form  METHOD="POST" action="/diyEdit/importExcel" ENCTYPE="multipart/form-data">
+                  <input type="file" name="file" id="file" style="float:left;">    
+                  <input type="submit" name="Submit" height="30px" value="提交数据表" />             
+           </form>
+    </div>
+</div>
+<div id="content" style="display: block;">
+        <div style="position: relative; background-color: transparent;float:left;"><div style="position: relative; overflow: hidden;cursor: default;"></div></div>
+</div>
+    <script type="text/javascript" src="/ui/js/jquery-1.4.4.min.js"></script> 
+    <script type="text/javascript">
+    $(function(){
+    	$("#upload").click(function(){
+    		 	var stage=$("#stage").val();	
+    		  	var tableid =$("#result").val();
+    		  	 $.ajax({
+    		            type: "POST",
+    		            url: "/diyEdit/getUpperrowAndLeftcol",
+    		            data: {
+    				    	"tableid":tableid,
+    				    	"stage":stage
+    		            },
+    		            success: function (data) {
+    		            	alert(data);
+    		            	//maxUpLevel=parseInt(data.staupperrow)+1;
+    		            	//maxLeftLevel=parseInt(data.staleftcol)+1;
+    		            }
+    		        });
+    	});
+    });
+    
+    function checkForm(){
+    	var file=$("#file").val();
+    	if(!file){
+    		alert("请选择文件后上传");
+    		return false;
+    	}
+    	//检查后缀名
+    	var index=file.lastIndexof(".");
+    	if(index <0)
+    		alert("上传的文件格式不正确，请选择excel文件（*.xls或*.xlsx）");
+    	
+    }
+    </script>
+</body>
+</html>

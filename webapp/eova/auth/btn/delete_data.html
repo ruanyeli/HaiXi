@@ -1,0 +1,34 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="deleteChoose()">
+	${button.name!}
+</a>
+<script type="text/javascript" src="/ui/layer/layer.js"></script>
+<script type="text/javascript">
+var deleteChoose = function() {
+	var grid = $('#grid');
+	var row = grid.datagrid('getSelected');
+	if (isSelected(row)){
+		if(confirm("确认删除该期数据吗？")){
+		console.log("this is delete");
+			$.ajax({
+			    type:'post',
+			    url:'/diyEdit/renderDeleteData',
+			    data:{
+			    	tableid:row.statementid,
+			    	stageid:row.stageid
+			    },
+			    success:function(response){
+			    	if(response.resultCode=="0")
+			        {
+			            layer.msg("删除成功"); 
+			            //focus data.view by default
+			            document.querySelector('#grid1').focus();			
+			        }else{
+			            layer.msg(response.resultDesc);
+			        }
+			    }
+			});
+		}
+	}
+};
+</script>

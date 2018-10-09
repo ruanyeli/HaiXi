@@ -1,0 +1,12 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="addCommunique()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var addCommunique = function() {
+	var dialog = parent.sy.modalDialog({/*  打开一个对话框*/
+	 	title : "新增公报模板", 	
+	 	url :encodeURI('/communique/addCommunique') 
+	}, document.body.offsetWidth, document.body.offsetHeight);
+};
+</script>

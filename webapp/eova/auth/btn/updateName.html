@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>修改报表名称</title>
+ <script type="text/javascript" src="/ui/js/jquery-1.8.2.min.js"></script>
+ <script type="text/javascript" src="/ui/layer/layer.js"></script>
+</head>
+<body>
+ <input type="hidden" id="result" value="${result}" ></input>
+                  <div id="newName" style="float:left">
+		             <label>请输入新表名：</label>
+		             <input id="name" type="text" width="200px"/>
+		             &nbsp;&nbsp;
+		             <input id="submit" type="button" style="width:50px;float:right;height=22px;" value="确认"/>
+		          </div>          
+		          <script>
+		          $(document).ready(function(){
+		        	  $("#submit").click(function(){
+		        	       var tableName=$("#name").val();
+		        	       var tableid=$("#result").val();
+		        	   	$.ajax({
+		    			    type:'post',
+		    			    url:'/diyEdit/renderUpdateTableName',
+		    			    data:{
+		    			    	tableid:tableid,	
+		    			    	tableName:tableName
+		    			    
+		    			    },
+		    			    success:function(response){
+		    			    	if(response.resultCode=="0")
+		    			        {
+		    			            layer.msg("修改成功");
+		    			            self.location.reload();
+		    			            //focus data.view by default
+		    			            document.querySelector('#grid1').focus();			
+		    			        }else{
+		    			            layer.msg(response.resultDesc);
+		    			        }
+		    			    }
+		    			});		        	   			        	   	
+		        	  });
+		        	  
+		          });
+		          </script>
+</body>
+</html>

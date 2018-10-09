@@ -1,0 +1,28 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="showRuleReport()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var showRuleReport = function(){
+	var grid = $("#grid");
+	var row = grid.datagrid("getSelected");
+	var restage=0;//年报
+	if(row){
+		if(row.restage=="季"){
+			restage=2;
+		}else if(row.restage=="半年"){
+			restage=1;
+		}else if(row.restage=="月"){
+			restage=3;
+		}
+		var rename=row.rename;
+		var dialog = parent.sy.modalDialog({/*  打开一个对话框*/
+			id:"chooseDialog",
+		 	title : "选择统计时间范围", 		
+		 	url : '/rule/showRuleReportStage?reid='+row.reid+'&restage='+restage+'&rename='+rename
+		}, 400, 230);
+	}else{
+		$.slideMsg("请选择报表！");
+	}
+};
+</script>

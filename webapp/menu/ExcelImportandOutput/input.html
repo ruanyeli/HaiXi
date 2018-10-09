@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>数据导入</title>
+    <meta charset="UTF-8">
+    <link href="/ui/css/common/bootstrap-combined.min.css" rel="stylesheet">
+    <link href="/ui/css/common/layoutit.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/ui/css/common/common.css" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/manageanalysis/manageanalysis.css" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/hui/static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/hui/static/h-ui/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/hui/lib/My97DatePicker/skin/WdatePicker.css"/>
+    <link rel="stylesheet" href="/ui/css/css-loader.css">
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=iso-8859-1">
+</head>
+<body>
+
+
+<div class="text-c">
+    <div class="panel-body" style="height:30px">
+           <form  METHOD="POST" action="/excel/importExcelData"  ENCTYPE="multipart/form-data">
+                  <input type="file" name="file" id="file" style="float:left;">
+                  <input type="text" style="display:none" id="tableName" name="tableName" value="${tableName }"/>
+                  <input type="text" style="display:none" id="objectCode" name="objectCode" value="${objectCode }"/>
+                  <input type="text" style="display:none" id="pkName" name="pkName" value="${pkName }"/>
+                  <input type="text" style="display:none" id="menuName" name="menuName" value="${menuName }"/>
+                  <input type="submit" name="Submit" height="30px" value="提交文件" />             
+           </form>
+    </div>
+</div>
+<div id="content" style="display: block;">
+        <div style="position: relative; background-color: transparent;float:left;"><div style="position: relative; overflow: hidden;cursor: default;"></div></div>
+</div>
+    <script type="text/javascript" src="/ui/js/jquery-1.4.4.min.js"></script> 
+    <script type="text/javascript">
+    function checkForm(){
+    	var file=$("#file").val();
+    	if(!file){
+    		alert("请选择文件后上传");
+    		return false;
+    	}
+    	//检查后缀名
+    	var index=file.lastIndexof(".xls");
+    	if(index <0)
+    		alert("上传的文件格式不正确，请选择excel文件（*.xls或*.xlsx）");
+    	
+    }
+    </script>
+</body>
+</html>

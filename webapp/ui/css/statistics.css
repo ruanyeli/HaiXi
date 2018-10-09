@@ -1,0 +1,37 @@
+body,html{
+    margin: 0;
+    padding: 0;
+}
+.infocontainer{
+    float: left;
+    padding:20px;
+    margin-top: 8px;
+    width:80%;
+    margin-left: 2%;
+    background-color: #F4F8FF;
+
+}
+.chartcontainer{
+    float: right;
+    width: 60%;
+    min-width: 600px;
+    margin-top: 8px;
+    padding:20px;
+    margin-right: 2%;
+}
+.info{
+    line-height: 36px;
+}
+.info select{
+    width: 50%;
+    height: 30px;
+}
+.makechart{
+    margin-top: 100px;
+}
+.makechart-s{
+	margin-top:6px;
+}
+#leftheadinfo{
+    display: none;
+}

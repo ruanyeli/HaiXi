@@ -1,0 +1,16 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="viewCommunique()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var viewCommunique = function() {
+	var grid = $('#grid');
+	var id = grid.datagrid('getSelected').id;
+	var returnType="view";
+
+		var dialog = parent.sy.modalDialog({/*  打开一个对话框*/
+		 	title : "查看公报模板", 		
+		 	url :encodeURI('/communique/editCommunique?id='+JSON.stringify(id)+"&returnType="+returnType) 
+		}, document.body.offsetWidth, document.body.offsetHeight);	
+};
+</script>

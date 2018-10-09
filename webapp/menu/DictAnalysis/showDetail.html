@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css">
+<title>Insert title here</title>
+</head>
+<body>
+<table id="sd1" title="新登"></table><br> 
+<table id="sd2" title="删除"></table><br> 
+<table id="sd3" title="变更"></table><br>
+</body>
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	$("#sd1").datagrid({
+		url:"/excel/getHistoryDetail?tableName=${tableName}&uuid=${uuid}&way=新登",
+		columns:[eval('${columns}')]
+	});	
+	$("#sd2").datagrid({
+		url:"/excel/getHistoryDetail?tableName=${tableName}&uuid=${uuid}&way=删除",
+		columns:[eval('${columns}')]
+	});	
+	$("#sd3").datagrid({
+		url:"/excel/getHistoryDetail?tableName=${tableName}&uuid=${uuid}&way=变更",
+		columns:[eval('${columns}')]
+	});
+})
+</script>
+</html>

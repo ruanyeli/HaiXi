@@ -1,0 +1,24 @@
+.bigcontainer{
+	
+	width:100%;
+ 	zoom:1;
+	overflow:auto;
+	
+}
+
+.container{
+
+	width:100%;
+	height:300px;
+	margin:5px 10px;
+}
+
+.childDiv{
+	display:inline-block;
+	width:32%;
+	height:300px;
+	border:1px solid gray;
+	margin-left:5px;
+	
+	
+}

@@ -1,0 +1,12 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="inputExcel()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var inputExcel = function() {
+	var dialog = parent.sy.modalDialog({/*  打开一个对话框*/
+	 	title : "选择Excel文件", 		
+	 	url : '/excel/chooseExcel?tableName=${object.table_name}&objectCode=${object.code}&pkName=${object.pk_name}&menuName=${menu.name}'
+	}, document.body.offsetWidth, document.body.offsetHeight);
+};
+</script>

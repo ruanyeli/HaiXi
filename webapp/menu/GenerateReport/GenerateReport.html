@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css">
+</head>
+<body>
+<div class="easyui-panel" title="选择期数" style="width:400px">
+		<div style="padding:10px 60px 20px 60px">
+	    <form id="ff" method="post">
+	    	<table cellpadding="5">
+	    		<tr>
+	    			<td>年份:</td>
+	    			<td><select class="easyui-combobox" name="year" id="year" style="width:200px;">
+	    					<option value='0'></option>
+	    					<option value='2008'>2008年</option>
+	    					<option value='2009'>2009年</option>
+	    					<option value='2010'>2010年</option>
+	    					<option value='2011'>2011年</option>
+	    					<option value='2012'>2012年</option>
+	    					<option value='2013'>2013年</option>
+							<option value='2014'>2014年</option>
+							<option value='2015'>2015年</option>
+							<option value='2016'>2016年</option>
+						</select>
+					</td>
+	    		</tr>
+	    		<br>
+	    		<tr>
+	    			<td>月份:</td>
+	    			<td><select class="easyui-combobox" name="month" id="month" style="width:200px;">
+	    					<option value='0'></option>
+							<option value='1'>1月</option>
+							<option value='2'>2月</option>
+							<option value='3'>3月</option>
+							<option value='4'>4月</option>
+							<option value='5'>5月</option>
+							<option value='6'>6月</option>
+							<option value='7'>7月</option>
+							<option value='8'>8月</option>
+							<option value='9'>9月</option>
+							<option value='10'>10月</option>
+							<option value='11'>11月</option>
+							<option value='12'>12月</option>
+						</select>
+					</td>
+	    		</tr>
+	    		<br>
+	    		<tr>
+	    			<td>季度：</td>
+	    			<td><select class="easyui-combobox" name="season" id="season" style="width:200px;">
+	    					<option value='0'></option>
+							<option value='1'>第一季度</option>
+							<option value='2'>第二季度</option>
+							<option value='3'>第三季度</option>
+							<option value='4'>第四季度</option>
+							<option value='5'>第五季度</option>
+	    				</select>
+	    			</td>
+	    		</tr>
+	    	</table>
+	    </form>
+	    <div style="text-align:center;padding:5px">
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">确定</a>
+	    </div>
+	    </div>
+</div>
+</body>
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript">
+function submitForm(){
+	var year = $("#year").combobox('getValue');
+	var month = $("#month").combobox('getValue');
+	var season = $("#season").combobox('getValue');
+	var deid = ${deid};
+	var resultDialog = parent.sy.modalDialog({/*  打开一个对话框*/
+	 	title : "衍生报表生成结果", 		
+	 	url : '/report/generateResult?year='+year+'&month='+month+'&deid='+deid+'&season='+season
+	}, 1000, 600);
+	parent.$("#myDialog").dialog('destroy');//关闭上一个对话框
+}
+</script>
+</html>

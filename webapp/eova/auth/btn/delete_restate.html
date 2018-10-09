@@ -1,0 +1,34 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="deleteChoose()">
+	${button.name!}
+</a>
+<script type="text/javascript" src="/ui/layer/layer.js"></script>
+<script type="text/javascript">
+var deleteChoose = function() {
+	var grid = $('#grid');
+	var row = grid.datagrid('getSelected');
+	if (isSelected(row)){
+		if(confirm("真的要删除该模板及包含的所有数据吗？")){
+		console.log("this is delete");
+			$.ajax({
+			    type:'post',
+			    url:'/rule/deleteRulestate',
+			    data:{
+			    	"restate":row.reid
+			    },
+			    success:function(response){
+			    	if(response.resultCode=="0")
+			        {
+			    		$('#grid').datagrid('load');
+			            document.querySelector('#grid1').focus();	
+			        }else{
+			            layer.msg(response.resultDesc);
+			        }
+			    }
+			});
+		}
+	}
+};
+</script>
+
+

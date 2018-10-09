@@ -1,0 +1,501 @@
+<html class="panel-fit">
+<head>
+<title>藏族地区经济指标对比</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="renderer" content="webkit">
+<link rel="stylesheet" type="text/css"
+	href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css"
+	href="/plugins/easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/plugins/eovaicon/icon.css">
+<link href="/plugins/My97DatePicker/skin/WdatePicker.css"
+	rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="/eova/htmltag/eova_tag.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/common.css">
+<link rel="stylesheet" type="text/css" href="/ui/eova/css/eova.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/jsc/qzjjqkbz.css">
+<script type="text/javascript" src="/ui/js/jquery.min.js"></script>
+
+<script type="text/javascript"
+	src="/plugins/easyui/jquery.easyui.min.js"></script>
+
+<script type="text/javascript"
+	src="/plugins/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+<body class="easyui-layout ">
+	<div class="panel layout-panel layout-panel-north layout-split-north"
+		style="left: 0px; top: 0px; width: 100%;">
+		<div class="panel-header">
+			<div class="panel-title">快速查询</div>
+			<div class="panel-tool">
+				<a class="panel-tool-collapse" href="javascript:void(0)"
+					style="display: none;"></a>
+			</div>
+		</div>
+		<div id="allContainer" class="allContainer" >
+			<div id="layoutNorth" region="north" title="" split="true"
+				style="height: 35px; width: 100%;" class="panel-body layout-body">
+				<form id="queryForm" onsubmit="return false;"
+					class="nice-validator n-default" novalidate="novalidate">
+					<div id="eova-query" class="eova-form">
+
+						<div class="eova-form-field" title="" style="width: 30%">
+							<div class="eova-form-lbl" style="text-align: center">选择时间:</div>
+							<div>
+								<div class="eova-text" id="nickname" data-options=""
+									style="height: 24px;">
+									<input type="text" id="begintime"
+										onClick="WdatePicker({dateFmt:'yyyy 年'})" value="2011 年" />
+								</div>
+							</div>
+						</div>
+
+
+						<div class="eova-form-field" title="" style="width: 10%">
+
+							<div>
+								&nbsp;&nbsp;<a href="#" class="easyui-linkbutton"
+									iconCls="icon-search" onclick="searchInfo()">查询</a>
+
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+
+			<div id="zhangcontainer" class="zhangcontainer" style="width: 98%">
+				<div style="height: 10px"></div>
+				<div style="height: 10px"></div>
+				<div class="containerBig" split="true">
+					<div id="chart" class="chart" style="width: 100%; height: 100%;"></div>
+				</div>
+
+			</div>
+
+			<div id="bottomcontainer" class="bottomcontainer" style="width: 98%">
+				<table id="indexsTable" width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13" align="center" >
+					
+				</table>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="/ui/js/template.js"></script>
+
+	<script type="text/javascript" src="/ui/js/echarts.min.js"></script>
+	<script type="text/javascript">
+		/* var areas = [ 'haixi', 'haibei', 'hainan', 'huangnan', 'yushu',
+				'guoluo', 'ganzi', 'aba', 'diqing', 'gannan' ]; */
+		/* var areasName = [ '海西', '海北', '海南', '黄南', '玉树', '果洛', '甘孜', '阿坝', '迪庆',
+				'甘南' ]; */
+		var areasName = [];
+		var areasData = {};
+
+		var indexsTable = [ {
+			name : '地区生产总值',
+			unit : '亿元',
+			selected : true,
+			tableName : 'z_regionalgdp',
+			columns : [ {
+				columnName : '绝对额',
+				type : 'bar',
+				yAxisIndex : 0
+			}, {
+				columnName : '比上年增长',
+				type : 'line',
+				yAxisIndex : 2
+			} ]
+		}, {
+			name : '规模以上工业增加值',
+			unit : '亿元',
+			selected : false,
+			tableName : 'z_industy_increase',
+			columns : [ {
+				columnName : '绝对额',
+				type : 'bar',
+				yAxisIndex : 0
+			}, {
+				columnName : '比上年增长',
+				type : 'line',
+				yAxisIndex : 2
+			} ]
+		}, {
+			name : '城镇常住居民人均可支配收入',
+			unit : '元',
+			selected : false,
+			tableName : 'z_urban_per',
+			columns : [ {
+				columnName : '绝对额',
+				type : 'bar',
+				yAxisIndex : 1
+			}, {
+				columnName : '比上年增长',
+				type : 'line',
+				yAxisIndex : 2
+			} ]
+		}, {
+			name : '农村常住居民人均可支配收入',
+			unit : '元',
+			selected : false,
+			tableName : 'z_village_per',
+			columns : [ {
+				columnName : '绝对额',
+				type : 'bar',
+				yAxisIndex : 1
+			}, {
+				columnName : '比上年增长',
+				type : 'line',
+				yAxisIndex : 2
+			} ]
+		}, {
+			name : '固定资产投资',
+			unit : '亿元',
+			selected : true,
+			tableName : '`z_assets_invest`',
+			columns : [ {
+				columnName : '绝对额',
+				type : 'bar',
+				yAxisIndex : 0
+			}, {
+				columnName : '比上年增长',
+				type : 'line',
+				yAxisIndex : 2
+			} ]
+		}, {
+			name : '地方公共财政预算收入',
+			unit : '亿元',
+			selected : true,
+			tableName : 'z_social_spend',
+			columns : [ {
+				columnName : '绝对额',
+				type : 'bar',
+				yAxisIndex : 0
+			}, {
+				columnName : '比上年增长',
+				type : 'line',
+				yAxisIndex : 2
+			} ]
+		}, {
+			name : '社会消费品零售总额',
+			unit : '亿元',
+			selected : true,
+			tableName : 'z_revenues',
+			columns : [ {
+				columnName : '绝对额',
+				type : 'bar',
+				yAxisIndex : 0
+			}, {
+				columnName : '比上年增长',
+				type : 'line',
+				yAxisIndex : 2
+			} ]
+		} ];
+
+		var indexTablesName = [];
+		for (var i = 0; i < indexsTable.length; i++) {
+			indexTablesName.push(indexsTable[i].tableName);
+		}
+
+		$(document).ready(function() {
+
+			findDimensions();
+
+			var myDate = new Date();
+			var year = myDate.getFullYear() - 1;
+			$("#begintime").val(year + " 年");
+			searchInfo();
+			/* $.ajax({
+				type : "POST",
+				url : "/chart/getZTablesData",
+				data : {
+					'tablesName' : indexTablesName,
+					'begintime' : year
+				},
+				success : function(data) {
+					//console.log(data);
+					parseData(data);
+					drawChart(year);
+				},
+				error : function() {
+					console.log(arguments[1]);
+				}
+			}); */
+		});
+
+		function searchInfo() {
+
+			var year = $("#begintime").val().slice(0, 4);
+
+			$.ajax({
+				type : "POST",
+				url : "/chart/getZTablesData",
+				data : {
+					'tablesName' : indexTablesName,
+					'begintime' : year
+				},
+				success : function(data) {
+					//console.log(data);
+					parseData(data);
+					drawChart(year);
+				},
+				error : function() {
+					console.log(arguments[1]);
+				}
+			});
+		}
+
+		function parseData(data) {
+			areasData = {};
+			//初始化areasData
+			for (var i = 0; i < indexsTable.length; i++) {
+				var tableName = indexsTable[i].tableName;
+				areasData[tableName] = {};
+				//areasData = {table0:{},table1:{},...}
+				for (var j = 0; j < indexsTable[i].columns.length; j++) {
+					var columnName = indexsTable[i].columns[j].columnName;
+					areasData[tableName][columnName] = [];
+					//areasData = {table0:{column0:[],column1:[],...},table1:{},...}
+				}
+			}//初始化areasData结束
+
+			//给areasData赋值
+			for ( var key in data) {
+				var tableName = key;
+				areasName = [];
+				for (var i = 0; i < data[tableName].length; i++) {
+					var areaName = data[tableName][i].area;
+					areasName.push(areaName);
+					for ( var key in areasData[tableName]) {
+						//areasData = {table0:{column0:[],column1:[],...},table1:{},...}
+						var columnName = key;
+						var value = data[tableName][i][columnName];
+						var num = parseFloat(value);
+						if (num != null) {
+							if (columnName != null
+									&& columnName.indexOf('比上年') != -1) {
+								num = num.toFixed(1);
+							} else {
+								num = num.toFixed(2);
+							}
+						} else {
+							num = "0";
+						}
+						areasData[tableName][columnName].push(num);
+					}
+				}
+			}//给areasData赋值结束
+
+			//console.log(areasData);
+		}
+
+		function drawChart(year) {
+			var series = [];
+			var legend_selected = {};
+			var legend_data = [];
+
+			//给series、legend_selected、legend_data赋值
+			for (var i = 0; i < indexsTable.length; i++) {
+				var name = indexsTable[i].name;
+				legend_data.push(name);
+				var selected = indexsTable[i].selected;
+				legend_selected[name] = selected;
+				var tableName = indexsTable[i].tableName;
+				for (var j = 0; j < indexsTable[i].columns.length; j++) {
+					var seriesItem = {};
+					seriesItem.name = name;
+					seriesItem.type = indexsTable[i].columns[j].type;
+					seriesItem.barMaxWidth = '10px';
+					seriesItem.yAxisIndex = indexsTable[i].columns[j].yAxisIndex;
+					var columnName = indexsTable[i].columns[j].columnName;
+					seriesItem.data = areasData[tableName][columnName];
+					series.push(seriesItem);
+				}
+			}
+
+			var chart = echarts.init(document.getElementById("chart"));
+			var colors = [ '#5793f3', '#d14a61', '#675bba' ];//y轴的颜色
+			var chartOption = {
+				title : {
+					text : year + '年10个藏族自治州主要经济指标对比图', //dynamic
+					x : 'center'
+				},
+				tooltip : {
+					trigger : 'axis',
+					axisPointer : {
+						type : 'shadow'
+					},
+					formatter : function(params) {//dynamic
+						//console.log(params);
+						var result = '';
+						for (var i = 0; i < params.length; i++) {
+							if (params[i].seriesType == 'bar') {
+								var unittemp = indexsTable[params[i].seriesIndex / 2].unit;
+								result = result + params[i].seriesName + ':'
+										+ params[i].value + unittemp + '</br>';
+							}
+							if (params[i].seriesType == 'line') {
+								result = result + params[i].seriesName
+										+ '比上年增长:' + params[i].value + '%'
+										+ '</br>';
+							}
+						}
+						return result;
+					}
+				},
+				grid : {
+					right : '20%'
+				},
+				toolbox : {
+					show : true,
+					feature : {
+						dataView : {
+							readOnly : true
+						},
+						restore : {},
+						saveAsImage : {}
+					}
+				},
+				legend : {
+					bottom : -5,
+					selected : legend_selected,//dynamic
+					data : legend_data
+				//dynamic
+				},
+				xAxis : [ {
+					type : 'category',
+					axisTick : {
+						alignWithLabel : true
+					},
+					data : areasName
+				//dynamic
+				} ],
+				yAxis : [ {
+					type : 'value',
+					name : '（亿元）',
+					position : 'right',
+					axisLine : {
+						lineStyle : {
+							color : colors[0]
+						}
+					},
+					axisLabel : {
+						formatter : '{value}'
+					}
+				}, {
+					type : 'value',
+					name : '（元）',
+					position : 'right',
+					offset : 80,
+					axisLine : {
+						lineStyle : {
+							color : colors[1]
+						}
+					},
+					axisLabel : {
+						formatter : '{value}'
+					}
+				}, {
+					type : 'value',
+					name : '增长率%',
+					min : -20,
+					max : 80,
+					position : 'left',
+					axisLine : {
+						lineStyle : {
+							color : colors[2]
+						}
+					},
+					axisLabel : {
+						formatter : '{value} %'
+					}
+				} ],
+				series : series
+			//dynamic
+			};
+
+			chart.setOption(chartOption);
+			window.onresize = chart.resize;
+		}
+
+		function drawTable(year,indexsObj){
+			var tableHeader = '<tr class="trClass">';
+			tableHeader = tableHeader + '<td style="background-color:#D8D8D8;">'+year +'年藏族地区经济指标排名</td>';
+			tableHeader = tableHeader + '</tr>';
+			
+			var tableBody = '';
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;地区生产总值占比：</td>';
+			num = parseFloat((indexsObj.dataGDP[year][1].value/indexsObj.dataGDP[year][0].value)*100);
+			num = num.toFixed(1);
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ num+'%</td>';
+			
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;固定资产投资占比：</td>';
+			num = parseFloat((indexsObj.dataFinancial[year][1].value/indexsObj.dataFinancial[year][0].value)*100);
+			num = num.toFixed(1);
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ num+'%</td>';
+			
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;社会消费品零售总额占比：</td>';
+			num = parseFloat((indexsObj.dataEstate[year][1].value/indexsObj.dataEstate[year][0].value)*100);
+			num = num.toFixed(1);
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ num+'%</td>';
+			
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;地方公共财政预算收入：</td>';
+			num = parseFloat((indexsObj.dataPI[year][1].value/indexsObj.dataPI[year][0].value)*100);
+			num = num.toFixed(1);
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ num+'%</td>';
+			
+			
+			$('#indexsTable').empty();
+			$('#indexsTable').html(tableHeader + tableBody);
+		}
+		
+		
+		$(window).resize(function() {
+			findDimensions();
+		});
+
+		function findDimensions() { //函数：获取尺寸
+			//获取窗口高度
+			if (window.innerHeight) {
+
+				winHeight = window.innerHeight;
+
+			} else if ((document.body) && (document.body.clientHeight)) {
+
+				winHeight = document.body.clientHeight;
+
+			}
+			//通过深入Document内部对body进行检测，获取窗口大小
+
+			if (document.documentElement
+					&& document.documentElement.clientHeight
+					&& document.documentElement.clientWidth) {
+
+				winHeight = document.documentElement.clientHeight;
+			}
+			//设置div的具体宽度=窗口的宽度的%
+			if (document.getElementById("allContainer")) {
+
+				document.getElementById("allContainer").style.height = winHeight
+						* 0.96 + "px";
+
+			}
+			if (document.getElementById("zhangcontainer")) {
+
+				document.getElementById("zhangcontainer").style.height = winHeight
+						* 0.80 + "px";
+
+			}
+			if (document.getElementById("bottomcontainer")) {
+
+				document.getElementById("bottomcontainer").style.height = winHeight
+						* 0.15 + "px";
+
+			}
+			
+		}
+	</script>
+
+
+</body>
+</html>

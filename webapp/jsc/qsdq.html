@@ -1,0 +1,562 @@
+<html class="panel-fit">
+<head>
+<title>全省地区经济指标对比</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="renderer" content="webkit">
+<link rel="stylesheet" type="text/css"
+	href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css"
+	href="/plugins/easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/plugins/eovaicon/icon.css">
+<link href="/plugins/My97DatePicker/skin/WdatePicker.css"
+	rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="/eova/htmltag/eova_tag.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/common.css">
+<link rel="stylesheet" type="text/css" href="/ui/eova/css/eova.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/jsc/qzjjqkbz.css">
+<script type="text/javascript" src="/ui/js/jquery.min.js"></script>
+<script type="text/javascript"
+	src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript"
+	src="/plugins/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+<body class="easyui-layout ">
+	<div class="panel layout-panel layout-panel-north layout-split-north"
+		style="left: 0px; top: 0px; width: 100%;">
+		<div class="panel-header">
+			<div class="panel-title">快速查询</div>
+			<div class="panel-tool">
+				<a class="panel-tool-collapse" href="javascript:void(0)"
+					style="display: none;"></a>
+			</div>
+		</div>
+		<div id="layoutNorth" region="north" title="" split="true"
+			style="height: 35px; width: 100%;" class="panel-body layout-body">
+			<form id="queryForm" onsubmit="return false;"
+				class="nice-validator n-default" novalidate="novalidate">
+				<div id="eova-query" class="eova-form">
+					<!--  
+					<div class="eova-form-field" title="" style="width: 20%">
+						<div class="eova-form-lbl" style="text-align: center">所属地区:</div>
+
+						<div id="login_id" data-options="">
+							<select id="region" class="easyui-combobox" name="region"
+								style="width: 100px;">
+								<option value="all">全省</option>
+								<option value="海西">海西州</option>
+								<option value="西宁">西宁州</option>
+								<option value="海东">海东州</option>
+								<option value="海南">海南州</option>
+								<option value="海北">海北州</option>
+								<option value="黄南">黄南州</option>
+								<option value="果洛">果洛州</option>
+								<option value="玉树">玉树州</option>
+							</select>
+
+						</div>
+					</div>
+					-->
+
+
+					<div class="eova-form-field" title="" style="width: 40%">
+						<div class="eova-form-lbl" style="text-align: center">开始时间:</div>
+						<div>
+							<div class="eova-text" id="nickname" data-options=""
+								style="height: 24px;">
+								<input type="text" id="begintime"
+									onClick="WdatePicker({dateFmt:'yyyy 年'})" value="2011 年" />
+							</div>
+						</div>
+					</div>
+
+
+					<div class="eova-form-field" title="" style="width: 40%">
+						<div class="eova-form-lbl" style="text-align: center">结束时间:</div>
+						<div>
+							<div class="eova-text" id="login_id" data-options=""
+								style="height: 24px;">
+								<input type="text" id="endtime"
+									onClick="WdatePicker({dateFmt:'yyyy 年'})" value="2016 年" />
+							</div>
+						</div>
+					</div>
+
+					<div class="eova-form-field" title="" style="width: 10%">
+
+						<div>
+							&nbsp;&nbsp;<a href="#" class="easyui-linkbutton"
+								iconCls="icon-search" onclick="searchInfo()">查询</a>
+
+						</div>
+					</div>
+				</div>
+			</form>
+
+		</div>
+		<div id="bigcontainer" class="bigcontainer">
+			<div style="height: 10px"></div>
+			<!--<center>
+				<h1></h1>
+			</center>-->
+			<div style="height: 10px"></div>
+			<div class="containerBig" style="width:100%">
+				<div id="mainDiv" class="leftDiv">1</div>
+				<div id="mainDiv2" class="rightDiv">
+					<table id="indexsTable" width="100%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13" align="center" >
+					
+					</table>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	<script type="text/javascript" src="/ui/js/template.js"></script>
+	<script type="text/javascript" src="/ui/js/echarts.min.js"></script>
+	
+
+	<script type="text/javascript">
+		var winHeight = 0;
+		var winWidth = 0;
+		var timeInfo;
+		//var dataStand= new Array();
+
+		$(document).ready(function() {
+
+			findDimensions();
+			getData();
+		});
+
+		$(window).resize(function() {
+			findDimensions();
+		});
+
+		function getData() {
+			var begintime = $("#begintime").val().slice(0, 4);
+			var endtime = $("#endtime").val().slice(0, 4);
+			//var region = $('#region').combobox('getValue');
+			
+			$.ajax({
+				type : "POST",
+				url : "/chart/getQsData",
+				data : {
+					'begintime' : begintime,
+					'endtime' : endtime
+				},
+				success : function(data) {
+					dealData(data);
+				},
+				error : function() {
+					console.log(arguments[1]);
+				}
+			});
+		}
+
+		function dealData(data) {
+			
+			var indexsObj = parseIndexsValue(data);
+			
+			var years = getYears(data);
+			//console.log(indexsObj);
+			//console.log(years);
+			drawCharts(years, indexsObj);
+			
+			drawTable(years[0],indexsObj);
+		}
+		
+
+		function drawCharts(years, indexsObj) {
+			$("#bigcontainer").find(".leftDiv").each(function() {
+				chartIndex = $(this).attr("id");
+				drawChart(years, chartIndex, indexsObj);
+			});
+		}
+
+		function createObj(title,series){ 
+			var obj = new Object(); //创建对象
+			obj.title = title; 
+			obj.series = series; 
+			return obj;
+		} 
+		
+		function drawChart(years, chartIndex, indexsObj) {
+			var myChart = echarts.init(document.getElementById(chartIndex));
+			var dataMap = {};
+			var beginYear;
+			var endYear;
+			
+			var optionValue = new Array();
+		
+			var tempOption; 
+			if(years != null && years.length>0){
+				
+				beginYear = years[0];
+				endYear = years[years.length-1];
+				for(var i=0; i< years.length; i++){
+					var tempTitle = years[i] + "年全省主要经济指标";
+					var titleJson = '{text: "'+ tempTitle + '"}'; 
+					//series值设置
+					tempOption = createObj(titleJson, composeSeries(years[i]));
+					optionValue.push(tempOption);
+				}
+				
+			}
+
+			dataMap.dataGDP = dataFormatter(indexsObj.dataGDP);
+			dataMap.dataFinancial = dataFormatter(indexsObj.dataFinancial);
+			dataMap.dataEstate = dataFormatter(indexsObj.dataEstate);
+			dataMap.dataPI = dataFormatter(indexsObj.dataPI);
+			dataMap.dataSI = dataFormatter(indexsObj.dataSI);
+			dataMap.dataTI = dataFormatter(indexsObj.dataTI);
+			
+			
+			var optionInfo = '[';
+			
+			if(optionValue != null && optionValue.length >0){
+				for(var h=0; h< optionValue.length; h++){
+					if(h == optionValue.length-1){
+						optionInfo = optionInfo + "{title:" + optionValue[h].title + ",series :[" + optionValue[h].series + "]}";
+					}else{
+						optionInfo = optionInfo + "{title:" + optionValue[h].title + ",series :[" + optionValue[h].series +"]},";
+					}
+				}
+			}
+			optionInfo = optionInfo + "]";
+			
+			var jsonObj = eval('(' + optionInfo + ')');
+			
+			function dataFormatter(obj) {
+				var pList = [ '全省', '海西州', '西宁市', '海东市', '海南州', '海北州', '黄南州', '果洛州','玉树州'];
+				var temp;
+			
+				for (var year = beginYear; year <= endYear; year++) {
+					temp = obj[year];
+					for (var i = 0, l = temp.length; i < l; i++) {
+						obj[year][i] = {
+							name : pList[i],
+							value : temp[i]
+						}
+						
+					}
+					//dataStand.push(obj[year][0].value);
+				}
+				//console.log("dataStand is:" + dataStand);
+				return obj;
+			}
+			
+			function composeSeries(year){
+				
+				var seriesResult =  "{data : dataMap.dataGDP[" + year+"] },";
+				seriesResult = seriesResult + "{data : dataMap.dataFinancial[" + year+"] },";
+				seriesResult = seriesResult + "{data : dataMap.dataEstate[" + year+"] },";
+				seriesResult = seriesResult + "{data : dataMap.dataPI[" + year+"] },";
+				seriesResult = seriesResult + "{data : dataMap.dataSI[" + year+"] },";
+				seriesResult = seriesResult + "{data : dataMap.dataTI[" + year+"] }";			
+				//seriesResult = seriesResult + "{data : [{name: '海西州',value:dataMap.dataGDP[" + year+"][1].value },{name: '西宁市',value:dataMap.dataGDP[" + year+"][2].value },{name: '海东市',value:dataMap.dataGDP[" + year+"][3].value },{name: '海南州',value:dataMap.dataGDP[" + year+"][4].value },{name: '海北州',value:dataMap.dataGDP[" + year+"][5].value },{name: '黄南州',value:dataMap.dataGDP[" + year+"][6].value },{name: '果洛州',value:dataMap.dataGDP[" + year+"][7].value},{name: '玉树州',value:dataMap.dataGDP[" + year+"][8].value }]}";
+				return seriesResult;
+			}
+			
+			
+			option = {
+				baseOption : {
+					timeline : {
+						// y: 0,
+						axisType : 'category',
+						// realtime: false,
+						// loop: false,
+						autoPlay : true,
+						// currentIndex: 2,
+						playInterval : 2000,
+						// controlStyle: {
+						//     position: 'left'
+						// },
+						data : years,
+						label : {
+							formatter : function(s) {
+								return (new Date(s)).getFullYear();
+							}
+						}
+					},
+					title : {
+						textStyle:{
+					        //字体大小
+					　　　　	fontSize:20
+					    },
+						subtext : '数据来自两会材料（全省）'
+					},
+					tooltip : {
+						  trigger: 'axis',
+					        axisPointer: {
+					            type: 'shadow'
+					        },
+					        formatter: function(params){//dynamic
+					        	//console.log(params);
+					        	var temp;
+					        	var result = '';
+					        	for(var i = 0;i < params.length;i++){
+					        		if(params[i].seriesIndex == 4 || params[i].seriesIndex == 5 ){
+					        			result = result + params[i].seriesName + ':' + params[i].value  + '元</br>';
+					        		}else{
+					        			result = result + params[i].seriesName + ':' + params[i].value + '亿元</br>';
+					        		}
+					        		
+					        	}
+					        	return result;
+					        }
+						
+					},
+					legend : {
+						x : 'right',
+						width: '60%',
+						data : [ '地区生产总值', '固定资产投资', '社会消费品零售总额', '地方公共财政预算收入', '城镇居民人均可支配收入', '农村居民人均可支配收入' ],
+						selected : {
+							'城镇居民人均可支配收入（元）' : false,
+							'农村居民人均可支配收入（元）' : false
+						}
+					},
+					calculable : true,
+					grid : {
+						top : 80,
+						bottom : 100,
+						tooltip : {
+							trigger : 'axis',
+							axisPointer : {
+								type : 'shadow',
+								label : {
+									show : true,
+									formatter : function(params) {
+										return params.value.replace('\n', '');
+									}
+								}
+							}
+						}
+					},
+					xAxis : [ {
+						'type' : 'category',
+						'axisLabel' : {
+							'interval' : 0
+						},
+						'data' : [ '全省', '海西州', '西宁市', '海东市', '海南州', '海北州', '黄南州', '果洛州','玉树州' ],
+						splitLine : {
+							show : false
+						}
+					} ],
+					yAxis : [ {
+						type : 'value',
+						name : '（亿元）',
+						position: 'left',
+						axisLabel: {
+			                formatter: '{value}'
+			            }
+					} ,
+			        {
+			            type: 'value',
+			            name: '（元）',
+			            position: 'right',
+			            axisLabel: {
+			                formatter: '{value}'
+			            }
+			        }],
+					series : [ {
+						name : '地区生产总值',
+						type : 'bar'
+					}, {
+						name : '固定资产投资',
+						type : 'bar'
+					}, {
+						name : '社会消费品零售总额',
+						type : 'bar'
+					}, {
+						name : '地方公共财政预算收入',
+						type : 'bar'
+					}, {
+						name : '城镇居民人均可支配收入',
+						type : 'bar',
+						yAxisIndex: '1'
+					}, {
+						name : '农村居民人均可支配收入',
+						type : 'bar',
+						yAxisIndex: '1'
+					} ]
+					
+					
+					//,{
+					//    name: 'GDP占比',
+		            //    type: 'pie',
+		            //    center: ['75%', '35%'],
+		            //    radius: '28%',
+		            //    z: 100,
+		            //    itemStyle : { 
+		            //    	normal : {
+		            //    		label : {   
+		            //    			show:true,
+		            //    	 		formatter: "{b}({d}%)"
+		            //    	 	},
+		            //    	 	labelLine:{show:true}
+		            //    	 }
+		            //  }
+					//}
+					//
+					
+				},
+				options : jsonObj,
+			};
+
+			myChart.setOption(option);
+
+			
+			myChart.on('timelinechanged', function (timeLineIndex) {  
+			    //console.log("test is ok:" + years[timeLineIndex.currentIndex]);
+			    drawTable(years[timeLineIndex.currentIndex],indexsObj);
+			});  
+		}
+		
+		
+		/**
+		 * 删除数组某一指定元素
+		 */
+		Array.prototype.remove = function(m) {
+			if (isNaN(m) || m > this.length) {
+				return false;
+			}
+			this.splice(m, 1);
+		}
+
+		//获取年份
+		function getYears(indexsValue) {
+			var years = [];
+			for (var i = 0; i < indexsValue.length; i++) {
+				years.push(indexsValue[i].year);
+			}
+			return years;
+		}
+
+		//获取二维表的表头
+		function getTableHeaders(data) {
+			var headers = [];
+			for ( var key in data[0]) {
+				headers.push(key);
+			}
+			return headers;
+		}
+
+		//result的数据格式：
+		//{index1:[],index2:[],...}
+		function parseIndexsValue(data) {
+			var indexs = getTableHeaders(data);
+			var delitemindex = indexs.indexOf("year");
+			indexs.splice(delitemindex, 1);
+
+			//for (var i = 0; i < indexs.length; i++) {//初始化result[index]
+			//	result[indexs[i]] = [];
+			//}
+
+			var dataGDP = new Array();
+			var dataFinancial = new Array();
+			var dataEstate = new Array();
+			var dataPI = new Array();
+			var dataSI = new Array();
+			var dataTI = new Array();
+			
+			var tempInfo = new Array(); 
+			
+			$.each(data, function(index, item) {
+				dataGDP[item.year] = item.dqsc.split(',');
+				
+				dataFinancial[item.year] = item.gdzc.split(',');
+				
+				dataEstate[item.year] = item.shxf.split(',');
+				
+				dataPI[item.year] = item.dfcz.split(',') ;
+				
+				dataSI[item.year] = item.czjm.split(',') ;
+				
+				dataTI[item.year] = item.ncjm.split(',') ;
+			});
+
+			var result = new Object();
+			result.dataGDP = dataGDP;
+			result.dataFinancial = dataFinancial;
+			result.dataEstate = dataEstate;
+			result.dataPI = dataPI;
+			result.dataSI = dataSI;
+			result.dataTI = dataTI;
+			
+			return result;
+		}
+		
+		var num;
+		function drawTable(year,indexsObj){
+			var tableHeader = '<tr class="trClass">';
+			tableHeader = tableHeader + '<td style="background-color:#D8D8D8;">海西州经济指标占全省比重</td>';
+			tableHeader = tableHeader + '</tr>';
+			
+			var tableBody = '';
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;地区生产总值占比：</td>';
+			num = parseFloat((indexsObj.dataGDP[year][1].value/indexsObj.dataGDP[year][0].value)*100);
+			num = num.toFixed(1);
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ num+'%</td>';
+			
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;固定资产投资占比：</td>';
+			num = parseFloat((indexsObj.dataFinancial[year][1].value/indexsObj.dataFinancial[year][0].value)*100);
+			num = num.toFixed(1);
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ num+'%</td>';
+			
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;社会消费品零售总额占比：</td>';
+			num = parseFloat((indexsObj.dataEstate[year][1].value/indexsObj.dataEstate[year][0].value)*100);
+			num = num.toFixed(1);
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ num+'%</td>';
+			
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;地方公共财政预算收入：</td>';
+			num = parseFloat((indexsObj.dataPI[year][1].value/indexsObj.dataPI[year][0].value)*100);
+			num = num.toFixed(1);
+			tableBody = tableBody + '<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ num+'%</td>';
+			
+			
+			$('#indexsTable').empty();
+			$('#indexsTable').html(tableHeader + tableBody);
+		}
+
+		function findDimensions() { //函数：获取尺寸
+			//获取窗口高度
+			if (window.innerHeight) {
+
+				winHeight = window.innerHeight;
+				winWidth = window.innerWidth;
+
+			} else if ((document.body) && (document.body.clientHeight)) {
+
+				winHeight = document.body.clientHeight;
+				winWidth = document.body.clientWidth;
+
+			}
+			//通过深入Document内部对body进行检测，获取窗口大小
+
+			if (document.documentElement
+					&& document.documentElement.clientHeight
+					&& document.documentElement.clientWidth) {
+
+				winHeight = document.documentElement.clientHeight;
+				winWidth = document.documentElement.clientWidth;
+			}
+			//设置div的具体宽度=窗口的宽度的%
+			if (document.getElementById("bigcontainer")) {
+
+				document.getElementById("bigcontainer").style.height = winHeight
+						* 0.90 + "px";
+				
+				//document.getElementById("mainDiv").style.width = winWidth + "px";
+
+			}
+
+		}
+
+		function searchInfo() {
+
+			getData();
+		}
+	</script>
+
+
+</body>
+</html>

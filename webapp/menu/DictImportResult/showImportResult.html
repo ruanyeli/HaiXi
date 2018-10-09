@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css">
+<title>Insert title here</title>
+</head>
+<body>
+<table id="dg1" title="新登"></table><br> 
+<table id="dg2" title="删除"></table><br> 
+<table id="dg3" title="变更"></table><br>
+</body>
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('#dg1').datagrid({
+		singleSelect:false,
+		checkOnSelect:true,
+		selectOnCheck:true,
+		toolbar:[{
+			iconCls: 'icon-ok',
+			text:'新登入库',
+			handler: function(){
+				var rows = $('#dg1').datagrid("getSelections");
+				if(rows.length>0){
+					$.ajax({
+						type:"post",
+						url:"/excel/confirmAdd",
+						data:{
+							rows:JSON.stringify(rows),
+							tableName:'${tableName}',
+							pkName:'${pkName}',
+							status:0
+						},
+						dataType:"json",
+						success:function(request){
+							if(request){
+								$("#dg1").datagrid('reload');
+							}
+						}
+					});
+				}else{
+					alert("请选择行！");
+				}
+			}
+		},{
+			iconCls: 'icon-no',
+			text:'放弃新登',
+			handler: function(){
+				var rows = $('#dg1').datagrid("getSelections");
+				if(rows.length>0){
+					$.ajax({
+						type:"post",
+						url:"/excel/confirmAdd",
+						data:{
+							rows:JSON.stringify(rows),
+							tableName:'${tableName}',
+							pkName:'${pkName}',
+							status:1
+						},
+						dataType:"json",
+						success:function(request){
+							if(request){
+								$("#dg1").datagrid('reload');
+							}
+						}
+					});
+				}else{
+					alert("请选择行！");
+				}
+			}
+		}],
+		url:"/excel/getAddRecord?tableName=${tableName}",
+		columns:[eval('${columns}')]
+		//[[{"field":"ck","checkbox":true},{"field":"state","title":"状态"},{"field":"stage","title":"确认级别"},{"field":"companyclass","title":"单位类别"},{"field":"ogrnumber","title":"组织机构代码"},{"field":"name","title":"详细名称"},{"field":"leader","title":"单位负责人"},{"field":"areanumber","title":"行政区划代码"},{"field":"address","title":"详细地址"},{"field":"areacode","title":"长途区号"},{"field":"telephone","title":"固定电话"},{"field":"industrycode","title":"行业代码"},{"field":"activity","title":"主要业务活动"},{"field":"type","title":"登记注册类型"},{"field":"year","title":"开业年份"},{"field":"month","title":"开业月份"},{"field":"companystate","title":"企业营业状态"},{"field":"ogrsort","title":"机构类型"},{"field":"personareanumber","title":"统计局代码"},{"field":"currenttime","title":"当前时间"},{"field":"personname","title":"归属法人行政区划代码"},{"field":"personlegalname","title":"归属法人详细名称"},{"field":"personaddress","title":"归属法人详细地址"}]]
+	});
+	$('#dg2').datagrid({
+		singleSelect:false,
+		checkOnSelect:true,
+		selectOnCheck:true,
+		toolbar:[{
+			iconCls: 'icon-ok',
+			text:'确认删除',
+			handler: function(){
+				var rows = $('#dg2').datagrid("getSelections");
+				if(rows.length>0){
+					$.ajax({
+						type:"post",
+						url:"/excel/confirmDelete",
+						data:{
+							rows:JSON.stringify(rows),
+							tableName:'${tableName}',
+							pkName:'${pkName}',
+							status:0
+						},
+						dataType:"json",
+						success:function(request){
+							if(request){
+								$("#dg2").datagrid('reload');
+							}
+						}
+					});
+				}else{
+					alert("请选择行！");
+				}
+			}
+		},{
+			iconCls: 'icon-no',
+			text:'放弃删除',
+			handler: function(){
+				var rows = $('#dg2').datagrid("getSelections");
+				if(rows.length>0){
+					$.ajax({
+						type:"post",
+						url:"/excel/confirmDelete",
+						data:{
+							rows:JSON.stringify(rows),
+							tableName:'${tableName}',
+							pkName:'${pkName}',
+							status:1
+						},
+						dataType:"json",
+						success:function(request){
+							if(request){
+								$("#dg2").datagrid('reload');
+							}
+						}
+					});
+				}else{
+					alert("请选择行！");
+				}
+			}
+		}],
+		url:"/excel/getDeleteRecord?tableName=${tableName}",
+		columns:[eval('${columns}')]
+		//[[{"field":"ck","checkbox":true},{"field":"state","title":"状态"},{"field":"stage","title":"确认级别"},{"field":"companyclass","title":"单位类别"},{"field":"ogrnumber","title":"组织机构代码"},{"field":"name","title":"详细名称"},{"field":"leader","title":"单位负责人"},{"field":"areanumber","title":"行政区划代码"},{"field":"address","title":"详细地址"},{"field":"areacode","title":"长途区号"},{"field":"telephone","title":"固定电话"},{"field":"industrycode","title":"行业代码"},{"field":"activity","title":"主要业务活动"},{"field":"type","title":"登记注册类型"},{"field":"year","title":"开业年份"},{"field":"month","title":"开业月份"},{"field":"companystate","title":"企业营业状态"},{"field":"ogrsort","title":"机构类型"},{"field":"personareanumber","title":"统计局代码"},{"field":"currenttime","title":"当前时间"},{"field":"personname","title":"归属法人行政区划代码"},{"field":"personlegalname","title":"归属法人详细名称"},{"field":"personaddress","title":"归属法人详细地址"}]]
+	});
+	var columns = eval('${columns}');
+	for(var key in columns){
+		if(key > 0){
+			columns[key].formatter="changeFormatter";
+		}
+	}
+	var reg = new RegExp("\"changeFormatter\"","g");
+	var columns_processed = JSON.stringify(columns).replace(reg,"changeFormatter");
+	$('#dg3').datagrid({
+		singleSelect:false,
+		toolbar:[{
+			iconCls: 'icon-save',
+			text:'保存',
+			handler: function(){
+				var rows = $("#dg3").datagrid("getSelections");
+				if(rows.length>0){
+					var pkList = new Array();
+					var status = true;
+					for(var row in rows){
+						var pkValue = eval('rows[row].${pkName}');
+						for(var i in pkList){
+							if(pkValue == pkList[i]){
+								var status = false;
+								alert("只能选择保留一种变更数据！");
+								break;
+							}
+						}
+						if(status){
+							pkList.push(pkValue);
+						}else{
+							break;
+						}
+					}
+					if(status){
+						$.ajax({
+							type:"post",
+							url:"/excel/confirmChange",
+							data:{
+								rows:JSON.stringify(rows),
+								tableName:'${tableName}',
+								pkName:'${pkName}'
+							},
+							dataType:"json",
+							success:function(request){
+								if(request){
+									$("#dg3").datagrid('reload');
+								}
+							}
+						});
+					}
+				}else{
+					alert("请选择行！");
+				}
+			}
+		}],
+		url:"/excel/getChangeRecord?tableName=${tableName}",
+		columns:[eval(columns_processed)]
+	});
+})
+
+function changeFormatter(value,row,index,field){
+	if(value.indexOf("@#") >= 0){
+		return '<font color="#FF0000">'+value.split("@#")[0]+'</font>';
+	}else{
+		return value;
+	}
+}
+</script>
+</html>

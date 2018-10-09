@@ -1,0 +1,386 @@
+<html class="panel-fit">
+<head>
+<title>用户列表</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="renderer" content="webkit">
+<link rel="stylesheet" type="text/css"
+	href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css"
+	href="/plugins/easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/plugins/eovaicon/icon.css">
+<link href="/plugins/My97DatePicker/skin/WdatePicker.css"
+	rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="/eova/htmltag/eova_tag.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/common.css">
+<link rel="stylesheet" type="text/css" href="/ui/eova/css/eova.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/jsc/qzgk.css">
+<script type="text/javascript" src="/ui/js/jquery.min.js"></script>
+
+<script type="text/javascript"
+	src="/plugins/easyui/jquery.easyui.min.js"></script>
+
+<script type="text/javascript"
+	src="/plugins/My97DatePicker/WdatePicker.js"></script>
+
+
+
+</head>
+<body class="easyui-layout ">
+	<div class="panel layout-panel layout-panel-north layout-split-north"
+		style="left: 0px; top: 0px; width: 100%;">
+		<div class="panel-header">
+			<div class="panel-title">快速查询</div>
+			<div class="panel-tool">
+				<a class="panel-tool-collapse" href="javascript:void(0)"
+					style="display: none;"></a>
+			</div>
+		</div>
+		<div id="layoutNorth" region="north" title="" split="true"
+			style="height: 35px; width: 100%;" class="panel-body layout-body">
+			<form id="queryForm" onsubmit="return false;"
+				class="nice-validator n-default" novalidate="novalidate">
+				<div id="eova-query" class="eova-form">
+
+					<div class="eova-form-field" title="">
+						<div class="eova-form-lbl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开始时间:</div>
+						<div>
+							<div class="eova-text" id="nickname" data-options=""
+								style="height: 24px;">
+								<input type="text" id="begintime"
+									onClick="WdatePicker({dateFmt:'yyyy 年'})" value="2007 年" />
+							</div>
+						</div>
+					</div>
+
+
+					<div class="eova-form-field" title="">
+						<div class="eova-form-lbl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;结束时间:</div>
+						<div>
+							<div class="eova-text" id="login_id" data-options=""
+								style="height: 24px;">
+								<input type="text" id="endtime"
+									onClick="WdatePicker({dateFmt:'yyyy 年'})" value="2016 年" />
+							</div>
+						</div>
+					</div>
+
+					<div class="eova-form-field" title="">
+
+						<div>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+								href="#" class="easyui-linkbutton" iconCls="icon-search"
+								onclick="searchInfo()">查询</a>
+
+						</div>
+					</div>
+				</div>
+			</form>
+
+		</div>
+		<div id="bigcontainer" class="bigcontainer">
+			<div class="container" split="true">
+				<div id="1" class="willbedraw childDiv">1</div>
+				<div id="2" class="willbedraw childDiv">2</div>
+				<div id="3" class="willbedraw childDiv">3</div>
+			</div>
+			<div class="container" split="true">
+				<div id="4" class="willbedraw childDiv">4</div>
+				<div id="5" class="willbedraw childDiv">5</div>
+				<div id="6" class="willbedraw childDiv">6</div>
+			</div>
+			<div class="container" split="true">
+				<div id="7" class="willbedraw childDiv">7</div>
+				<div id="8" class="willbedraw childDiv">8</div>
+				<div id="9" class="willbedraw childDiv">9</div>
+			</div>
+			<div class="container" split="true">
+				<div id="10" class="willbedraw childDiv">10</div>
+				<div id="11" class="willbedraw childDiv">11</div>
+				<div id="12" class="willbedraw childDiv">12</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="/ui/js/template.js"></script>
+
+	<script type="text/javascript" src="/ui/js/echarts.min.js"></script>
+	<script type="text/javascript"
+		src="/ui/js/chart/echarts_dynamic_data.js"></script>
+	<script type="text/javascript" src="/ui/js/chart/echarts_option.js"></script>
+	<script type="text/javascript"
+		src="/ui/js/chart/echarts_static_data.js"></script>
+	<script type="text/javascript"
+		src="/ui/js/chart/get_chart_option_by_type.js"></script>
+	<script type="text/javascript"
+		src="/ui/js/chart/previewDataController.js"></script>
+
+
+	<script type="text/javascript">
+		var winHeight = 0;
+		var chartsinfo = {};
+
+		$(document).ready(function() {
+			
+			findDimensions();
+			$(window).resize(function() {
+				findDimensions();
+			});
+			
+			var chartinfoids = [];
+			$("#bigcontainer").find(".willbedraw").each(function(){
+                chartinfoid = $(this).attr("id");
+                chartinfoids.push(chartinfoid);
+            });
+			//console.log(chartinfoids.toString());
+			$.ajax({
+				   type : "POST",
+				   url : "/chart/getChartsInfo",
+				   data : {ids : chartinfoids.toString()},
+				   success : function(data){
+					   chartsinfo = data;
+					   dealCharts();
+				   },
+				   error: function(){
+					   console.log(arguments[1]);
+				   }
+				});
+		});
+		
+		function dealCharts(){
+			var begintime = $("#begintime").val().slice(0,4);
+			var endtime = $("#endtime").val().slice(0,4);
+			for(var i = 0;i < chartsinfo.length;i++){
+				   getIndexValue(chartsinfo[i],begintime,endtime);
+			   }
+		}
+		
+		function getIndexValue(chartinfo,begintime,endtime){
+			$.ajax({
+				   type : "POST",
+				   url : "/chart/getIndexsValue",
+				   data : {'indexColumns' : chartinfo.columnname1+","+chartinfo.columnname2,
+					   		'tablename' : chartinfo.tablename,
+					   		'begintime' : begintime,
+					   		'endtime' : endtime},
+				   success : function(indexsValue){
+					   drawChart(chartinfo,indexsValue);
+				   },
+				   error: function(){
+					   console.log(arguments[1]);
+				   }
+				});
+		}
+		
+		function drawChart(chartinfo,indexsValue){
+			var indexsObj = parseIndexsValue(indexsValue);
+			var years = getYears(indexsValue);
+			//console.log(years);
+			drawing(chartinfo,years,indexsObj);
+		}
+		
+		function drawing(chartinfo,years,indexsObj){
+			var myChart = echarts.init(document.getElementById(chartinfo.id));
+			var option = {
+				title: {
+					 text: chartinfo.chartname,//dynamic
+					 textStyle:{
+					        //文字颜色
+					        color:'black',
+					        //字体风格,'normal','italic','oblique'
+					        fontStyle:'normal',
+					        //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+					        fontWeight:'bold',
+					        //字体系列
+					        fontFamily:'sans-serif',
+					     //字体大小
+					　　　　 fontSize:12,
+					 },
+					 left: 'center'
+				},	
+				tooltip : {
+					  trigger: 'axis',
+				        axisPointer: {
+				            type: 'shadow'
+				        },
+				        formatter: function(params){//dynamic
+				        	console.log(params);
+				        	var result = '';
+				        	for(var i = 0;i < params.length;i++){
+				        		var unit;
+				        		if(params[i].seriesId.indexOf('收入') != -1){
+				        			unit = "元"
+				        		}else{
+				        			unit = "亿元"
+				        		}
+				        		
+				        		if(params[i].seriesType == 'bar'){
+				        			result = result + params[i].seriesName + ':' + params[i].value + unit +'</br>';
+				        		}
+				        		if(params[i].seriesType == 'line'){
+				        			result = result + '比上年增长:' + params[i].value + '%' + '</br>';
+				        		}
+				        	}
+				        	return result;
+				        }
+				},
+				toolbox : {
+					show : true,
+					feature : {
+						dataView: {show: true, readOnly: false},
+						saveAsImage : {
+							show : true
+						}
+					}
+				},
+				calculable : true,
+				legend : {
+					bottom: 10,
+				    left: 'center',
+					data : [ chartinfo.yaxisname1, chartinfo.yaxisname2 ]//dynamic
+				},
+				xAxis : [ {
+					type : 'category',
+					data : years,//dynamic
+					axisLabel:{  
+		                interval:0,//横轴信息全部显示  
+		                textStyle: {
+		                	 fontSize:10
+	                    } 
+		            }  
+				} ],
+				yAxis : [ {
+					type : 'value',
+					name : chartinfo.yaxis1,//dynamic
+					axisLabel : {
+						formatter : chartinfo.yaxisformat1,//dynamic
+							 textStyle: {
+			                	 fontSize:8
+		                    } 
+					}
+				}, {
+					type : 'value',
+					name : chartinfo.yaxis2,//dynamic
+					axisLabel : {
+						formatter : chartinfo.yaxisformat2,//dynamic
+							 textStyle: {
+			                	 fontSize:10
+		                    } 
+					}
+				} ],
+				color : [chartinfo.color1, chartinfo.color2],//dynamic
+				series : [
+
+						{
+							name : chartinfo.yaxisname1,//dynamic
+							type : chartinfo.yaxistype1,//dynamic
+							data : indexsObj[chartinfo.columnname1],//dynamic
+							barWidth: 15
+						},
+						{
+							name : chartinfo.yaxisname2,//dynamic
+							type : chartinfo.yaxistype2,//dynamic
+							label: {
+				                normal: {
+				                    show: true,
+				                    position: 'top',
+				                }
+				            },
+							yAxisIndex : 1,
+							data : indexsObj[chartinfo.columnname2]//dynamic
+						} ]
+			};
+
+			myChart.setOption(option);
+		}
+		
+		//获取年份
+		function getYears(indexsValue){
+			var years = [];
+			for(var i = 0;i < indexsValue.length;i++){
+				years.push(indexsValue[i].year);
+			}
+			
+			return years;
+		}
+		
+		//获取二维表的表头
+		function getTableHeaders(data){
+			var headers = [];
+			for(var key in data[0]){
+				headers.push(key);
+			}
+			return headers;
+		}
+		
+		//result的数据格式：
+		//{index1:[],index2:[],...}
+		function parseIndexsValue(data){
+			var indexs = getTableHeaders(data);
+			var delitemindex = indexs.indexOf("year");
+			indexs.splice(delitemindex,1);
+			
+			var result = {};
+			for(var i = 0;i < indexs.length;i++){//初始化index
+				result[indexs[i]] = [];
+			}
+			
+			$.each(data,function(index,item){//index代表行号，从0开始；item代表每行的数据
+				//对每一行进行处理
+				for(var j = 0;j < indexs.length;j++){
+					var cellValue = item[indexs[j]];
+					//console.log("cellValue is:" + indexs[j]);
+					var num = parseFloat(cellValue);
+					if(num != null){
+					if(indexs[j]!= null && indexs[j].indexOf('比上年') != -1){
+						num = num.toFixed(1);
+					}else{
+						num = num.toFixed(2);
+					}
+					}else{
+						num = "0";
+					}
+					result[indexs[j]].push(num);
+				}
+			});
+			
+			return result;
+		}
+		
+		function findDimensions() { //函数：获取尺寸
+			//获取窗口高度
+			if (window.innerHeight) {
+
+				winHeight = window.innerHeight;
+
+			} else if ((document.body) && (document.body.clientHeight)) {
+
+				winHeight = document.body.clientHeight;
+
+			}
+			//通过深入Document内部对body进行检测，获取窗口大小
+
+			if (document.documentElement
+					&& document.documentElement.clientHeight
+					&& document.documentElement.clientWidth) {
+
+				winHeight = document.documentElement.clientHeight;
+			}
+			//设置div的具体宽度=窗口的宽度的%
+			if (document.getElementById("bigcontainer")) {
+
+				document.getElementById("bigcontainer").style.height = winHeight
+						* 0.90 + "px";
+
+			}
+
+		}
+
+		function searchInfo() {
+
+			dealCharts();
+
+		}
+	</script>
+
+
+</body>
+</html>

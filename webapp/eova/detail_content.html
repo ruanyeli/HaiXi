@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Basic CRUD Application - jQuery EasyUI CRUD Demo</title>
+<link rel="stylesheet" type="text/css" href="/ui/css/easyui.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/icon.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/color.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/demo.css">
+<script type="text/javascript" src="/ui/js/jquery-1.6.min.js"></script>
+<script type="text/javascript" src="/ui/js/jquery.easyui.min.js"></script>
+</head>
+<body>
+	<div id="update_mapping_form">
+		<form id="updatemapping" method="post" style="text-align: left;">
+			<br />
+
+			<table>
+
+				<tr style="height:40px;">
+					<td style="text-align: left; font-size: 12px;">标题：&nbsp;&nbsp;&nbsp;</td>
+					<td><input class="easyui-textbox" data-options="required:true"
+						type="text" id="bt" name="bt" value="${bt}" readonly="true" style="width:600px;"></td>
+				</tr>
+
+				<tr style="height:440px;">
+					<td style="text-align: left;vertical-align:middle;font-size: 12px;">发布内容：&nbsp;&nbsp;&nbsp;</td>
+					<td><textarea style="height:400px; width: 600px" id="content"
+							name="content" readonly="true">${content}</textarea></td>
+				</tr>
+
+				<tr style="height:40px;">
+					<td style="text-align: left; font-size: 12px;">发布人：&nbsp;&nbsp;&nbsp;</td>
+					<td><input class="easyui-textbox" data-options="required:true"
+						type="text" id="publisher" name="publisher" value="${publisher}"
+						readonly="true" style="width:600px;"></td>
+				</tr>
+
+				<tr style="height:40px;">
+					<td style="text-align: left; font-size: 12px;">发布时间：&nbsp;&nbsp;&nbsp;</td>
+					<td><input class="easyui-textbox" data-options="required:true"
+						type="text" id="publishTime" name="publishTime"
+						value="${publishTime}" readonly="true" style="width:600px;"></td>
+				</tr>
+
+
+			</table>
+
+
+		</form>
+	</div>
+	<br />
+</body>
+
+<style type="text/css">
+#update_mapping_form {
+	width: 80%;
+	height: 80%;
+	position: relative;
+	left: 20%;
+	top: 20%;
+}
+</style>
+</html>

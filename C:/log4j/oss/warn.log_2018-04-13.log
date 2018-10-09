@@ -1,0 +1,2 @@
+
+2018-04-13 23:04:41[WARN]-[com.jfinal.plugin.ehcache.CacheKit.getOrAddCache()]: Could not find cache config [dict], using default.

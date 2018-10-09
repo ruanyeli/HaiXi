@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css">
+</head>
+<body>
+<table id="operators" title="选择算子" style="width:800px">
+</table>
+<input type="hidden" id="operatorId" value="123" />
+</body>
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/plugins/easyui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript">
+$(function(){
+	$("#operators").datagrid({
+		singleSelect:true,
+		pagination:true,
+		pageSize:10,
+		url:'/report/getOperatorData',
+		columns:[[    
+		           {field:'orid',title:'ID',width:50},    
+		           {field:'orname',title:'算子名称',width:100},
+		           {field:'staname',title:'报表名称',width:250},
+		           {field:'orstagename',title:'地区',width:100},
+		           {field:'typename',title:'报表类型',width:80},
+		           {field:'orstage',title:'比较维度',formatter:orstageFormatter,width:80},
+		           {field:'orstastage',title:'统计维度',formatter:orstastageFormatter,width:80}
+		       ]]  
+	});
+	$("#operators").datagrid({"onClickRow":
+		function(){
+			$("#operatorId").val($("#operators").datagrid("getSelected").orid);
+			
+		}
+	});
+})
+</script>
+<script type="text/javascript">
+function orstageFormatter(value){
+	if(value == 0){
+		return "本期";
+	}else if(value == 1){
+		return "环比";
+	}else if(value == 2){
+		return "同比";
+	}
+}
+function orstastageFormatter(value){
+	if(value == 0){
+		return "年";
+	}else if(value == 1){
+		return "季度";
+	}else if(value == 2){
+		return "月";
+	}
+}
+</script>
+</html>

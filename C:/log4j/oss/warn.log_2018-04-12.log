@@ -1,0 +1,7 @@
+
+2018-04-12 16:13:57[ERROR]-[com.jfinal.kit.LogKit.error()]: port: 8080 already in use!
+java.lang.IllegalStateException: port: 8080 already in use!
+	at com.jfinal.server.JettyServer.doStart(JettyServer.java:79)
+	at com.jfinal.server.JettyServer.start(JettyServer.java:65)
+	at com.jfinal.core.JFinal.start(JFinal.java:154)
+	at com.oss.OSSConfig.main(OSSConfig.java:126)

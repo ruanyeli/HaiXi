@@ -1,0 +1,37 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="outputExcel()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var outputExcel = function() {
+	var tableName = '${object.table_name}';
+	var viewName = '${object.view_name}';
+	var dataSource = '${object.data_source}';
+	var objectCode = '${object.code}';
+	var menuName = '${menu.name}';
+	$.ajax({
+		type:"post",
+		url:"/excel/generateExcel",
+		data:{
+			tableName : tableName+viewName,
+			dataSource : dataSource,
+			objectCode : objectCode,
+			menuName : menuName
+		},
+		dataType:"json",
+		success:function(request){
+			if(request){
+				window.location.href="/excel/outputExcel?menuName="+menuName;
+				$.messager.show({
+                    title: "提示",
+                    msg: "Excel文件下载中...",
+                    showType: 'slide',
+                    timeout: 2000
+                });
+			}else{
+				$.slideMsg("Excel生成失败，请联系管理员！！！");
+			}
+		}
+	});
+};
+</script>

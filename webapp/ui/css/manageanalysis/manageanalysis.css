@@ -1,0 +1,142 @@
+#cover{position: fixed;z-index: 1000;top:0;left:0;width:100%;height:100%;background-color: rgba(0,0,0,.7);display: none}
+@media screen and (max-width: 1200px) {
+    .menus{width: 800px;margin: 130px auto auto auto}
+}
+@media screen and (min-width: 1200px) {
+    .menus{width: 1200px;margin: 130px auto auto auto}
+}
+.secondicon{display: inline-block;margin: auto 20px auto}
+.secondicon p{color: #fff;text-align: center;margin-top: 5px}
+.removecover{color: #fff;float: right;margin: 50px 100px 0 0;cursor: pointer}
+
+
+/*陈行健：主页内容 */
+footer{clear: both;}
+ul li{
+    list-style: none;
+}
+.nav{
+    width:1200px;
+    margin:0 auto;
+}
+.floatingleft{width: 30%;font-size: 14px;}
+.floatingright{width:68%;font-size:14px;margin-bottom: 40px;}
+.upleft{
+    width:335px;
+    text-align: center;
+    margin-bottom: 50px;
+}
+.upright{
+    width:400px;
+    text-align: center;
+}
+.charttitle{
+    width: 135px;
+    height: 25px;
+    margin: 0 auto;
+    clear: both;
+    border-bottom: 3px solid #1c75cd;
+    margin-bottom: 30px;
+}
+.subtitle{
+    margin-top: 10px;
+    font-family: "Microsoft YaHei";
+    font-size: 14px;
+    color:#333333;
+    width: 1200px;
+    height: 50px;
+}
+.simulate-hr{
+    display: block;
+    float: right;
+    width: 810px;
+    border: 1px solid #d2d2d2;
+    margin: 15px 0 0 0;
+}
+.subtitle img{
+    margin-right: 10px;
+    position: relative;
+    top:5px;
+}
+.simulate-table{
+     border:1px solid #e1e1e1;
+     /*padding: 0 10px;*/
+    clear: both;
+}
+
+
+.simulate-table ul{
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+}
+.simulate-table ul li{
+     border-bottom:1px solid #eeeeee;
+     line-height: 43px;
+ }
+.more{
+    font-size: 12px;
+    text-align: right;
+    line-height: 30px;
+}
+.simulate-table li span:first-child{
+    width: 70%;
+    text-align: left;
+    display: inline-block;
+    color: #333333;
+}
+.simulate-table li span:last-child{
+    width: 30%;
+    text-align: right;
+    display: inline-block;
+    color: #1c75cd;
+}
+.tablehead{
+    padding: 5px 0 0 20px;
+    color:#ffffff;
+    height: 30px;
+    background: url(../../image/manageanalysis/th-bg.png) no-repeat;
+    background-size: cover;
+}
+
+.leftTop{
+    height: 55%;
+    border: 1px solid #e5e5e5;
+    margin-bottom: 22px;
+}
+
+.leftBot{
+    border: 1px solid #e5e5e5;
+    height:40%;
+}
+
+/*陈行健：主页内容 end */
+.thirdmenu {
+    height: 40px;
+    line-height: 40px;
+    width: 195px;
+    text-align: center;
+    background-color: #f8f8f8;
+
+    float: left
+}
+
+.thirdmenu a {
+    text-decoration: none;
+    color: #222222;
+}
+
+.thirdmenu a:hover,.thirdmenu a:focus {
+    color: #222222;
+    text-decoration: none;
+}
+
+.currentpath a {
+    text-decoration: none;
+    line-height: 40px;
+    font-size: 14px;
+    margin: 4px;
+    color: #333;
+}

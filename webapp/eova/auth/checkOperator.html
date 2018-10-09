@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>算子取值</title>
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css">
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/ui/js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="/ui/easy/easy.js"></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script src="/ui/layer/layer.js" type='text/javascript'></script>
+</head>
+<body>
+<div id="box" style="height:12px;">
+ 	<div style="height:30px;padding:10px">
+    	<label for="orname" style="width:80px;">&nbsp;&nbsp;算子名称:&nbsp;&nbsp;&nbsp;</label>   
+        <input id="orname" type="text" style="height:20px;width:200px;"> 
+    </div>
+    <div style="height:30px;padding:10px">
+    	<label for="stagename" style="width:80px;">&nbsp;&nbsp;地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;区:&nbsp;&nbsp;&nbsp;</label>   
+        <input id="stagename" class="easyui-combobox" style="height:25px;width:200px;"> 
+    </div>
+    <div style="height:30px;padding:10px" >
+    	<label for="stage" style="width:80px;">&nbsp;&nbsp;期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数:&nbsp;&nbsp;&nbsp;</label>   
+        <input id="stage" class="easyui-combobox" style="height:25px;width:200px;"> 
+    </div>
+    <div style="padding:10px">
+    	&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">查看算子值</a>
+    	&nbsp;&nbsp;<input id="orvalue" type="text" style="height:25px;width:200px;"> 
+	</div>
+</div>  
+</body>
+<script type="text/javascript">
+	var dgoptions=parent.$("#mydialog").dialog("options");
+	var orname=dgoptions.data.orname;
+	var orid=dgoptions.data.deid;
+	var operator;
+	$(document).ready(function(){
+		$.ajax({
+			type:"post",
+			url:"/derive/getOperator",
+			data:{"orid":orid},
+			async:false,
+			success:function(resp){
+				if(resp.resultCode=="0"){
+					operator=resp.data;//算子
+				}else{
+					layer.msg(resp.resultDesc);
+				}
+			}
+		});
+		$("#orname").val(orname);
+		$.ajax({
+			type:"post",
+			url:"/diyMenu/getStagename",
+			data:{"staid":operator.orstatement},
+			success:function(resp){
+				if(resp.resultCode=="0"){
+					$("#stagename").combobox({
+						data:resp.data,
+						valueField:"stagename",
+						textField:"stagename",
+						panelHeight:100,
+						onChange:function(newStagename,oldStagename){
+							$.ajax({
+								type:"post",
+								url:"/diyMenu/getStageAndUpper",
+								data:{
+										"staid":operator.orstatement,
+										"stagename":newStagename	
+									},
+								success:function(res){
+									if(res.resultCode=="0"){
+										$("#stage").combobox({
+											data:res.data.stageList,
+											valueField:"stagedate",
+											textField:"datename",
+											panelHeight:100
+										});
+									}else{
+										layer.msg(res.resultDesc);
+									}
+								}
+							});
+						}
+					});
+				}else{
+					layer.msg(resp.resultDesc);
+				}
+			}
+		});
+	});
+	
+	function submitForm() {
+		var stagename=$("#stagename").combobox('getValue');
+		var stage=$("#stage").combobox('getValue');
+		if(stagename==''||stage==''){
+			layer.msg("请将信息填写完整");
+		}else{
+			$.ajax({
+				type:"post",
+				url:"/derive/getOperatorValue",
+				data:{
+					"stattype":operator.stattype,
+					"stagename":stagename,
+					"stagedate":stage,
+					"staid":operator.orstatement,
+					"upper":operator.orupper,
+					"left":operator.orleft
+				},
+				success:function(res){
+					if(res.resultCode=="0"){
+						$("#orvalue").val(res.data);
+					}else{
+						layer.msg(res.resultDesc);
+					}
+				}
+			});
+		}
+	}
+</script>
+</html>

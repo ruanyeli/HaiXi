@@ -1,0 +1,13 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="addRestate()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+function addRestate() {
+		var dialog = parent.sy.modalDialog({
+			id:"mydialog",
+	 		title : '新增统计衍生报表',
+	 		url : '/menu/RuleReport/newRuleReport.html',
+	 	},800,600);
+}
+</script>

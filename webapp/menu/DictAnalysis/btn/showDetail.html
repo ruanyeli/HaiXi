@@ -1,0 +1,18 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="showHistoryDetail()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var showHistoryDetail = function(){
+	var grid = $('#grid');
+	var row = grid.datagrid('getSelected');
+	if(isSelected(row)){
+		var dialog = parent.sy.modalDialog({
+		 	title : "历史导入详情", 		
+		 	url : encodeURI('/excel/showHistoryDetail?uuid='+row.uuid+'&dictName='+row.dict_name)
+		}, document.body.offsetWidth, document.body.offsetHeight);
+	}else{
+		$.slideMsg("请选择一条记录");
+	}
+};
+</script>

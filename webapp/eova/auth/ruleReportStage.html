@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css">
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/ui/js/jquery-1.8.2.min.js"></script>
+<script src="/ui/layer/layer.js" type='text/javascript'></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/ui/easy/easy.js"></script>
+<script src="/ui/layer/layer.js" type='text/javascript'></script>
+</head>
+<body>
+<div style="height:100%;width:80%;padding:15px;text-align:center;">
+<div id="StartTime">
+ &nbsp;&nbsp;&nbsp;&nbsp;<input id="ruleStartYear"  class="easyui-combobox" name="ruleStartYear" editable="false" style="height:25px;width:80px;"> 
+ <label for="ruleStartYear" id="startyear" style="height:25px;width:50px;">年	</label>
+</div>
+<div style="width:100%;padding:10px;text-align:left;">至</div>
+<div id="EndTime">
+ &nbsp;&nbsp;&nbsp;&nbsp;<input id="ruleEndYear"  class="easyui-combobox" name="ruleEndYear" editable="false"  style="height:25px;width:80px;"> 
+ <label for="ruleEndYear" id="endyear" style="height:25px;width:50px;">年	</label>
+ </div>
+ <br>
+ <div style="text-align:center;">
+ <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submit()">提交</a>&nbsp;&nbsp;
+ <a href="javascript:void(0)" class="easyui-linkbutton" onclick="unSubmit()">取消</a>
+ </div>
+</div>
+</body>
+<script type="text/javascript">
+var reid=${reid};
+var endyear=${endyear};
+var startyear=${startyear};
+var restaid=${restaid};
+var restage=${restage};
+var rename=${rename};
+
+$(document).ready(function(){
+	var startYearData=new Array();
+	var endYearData=new Array();
+	for(var i=startyear;i<=endyear;i++){
+		var yearNode={
+				yearValue:i,
+				yearName:i
+		};
+		startYearData.push(yearNode);
+	}
+	$("#ruleStartYear").combobox({
+		limitToList:true,
+		panelHeight:70,
+		valueField:"yearValue",
+		textField:"yearName",
+		data:startYearData,
+		onChange:function(newStartYear,oldStartYear){
+			endYearData.splice(0,endYearData.length);
+			for(var i=newStartYear;i<=endyear;i++){
+				var yearNode={
+						yearValue:i,
+						yearName:i
+				};
+				endYearData.push(yearNode);
+			}
+			$("#ruleEndYear").combobox({
+				limitToList:true,
+				panelHeight:70,
+				valueField:"yearValue",
+				textField:"yearName",
+				data:endYearData
+			});
+		}
+	});
+	var startStr="";
+	var endStr="";
+	if(restage==1){//半年报
+		startStr="<input id='start' class='easyui-combobox' name='start' editable='false' style='height:25px;width:80px;'> <label for='start' style='height:25px;width:40px;'>半年</label>";
+		endStr="<input id='end' class='easyui-combobox' name='end' editable='false' style='height:25px;width:80px;'> <label for='end' style='height:25px;width:40px;'>半年</label>";
+		$("#startyear").after(startStr);
+		$("#endyear").after(endStr);
+		$("#start").combobox({
+			limitToList:true,
+			panelHeight:70,
+			valueField:"halfyearValue",
+			textField:"halfyearName",
+			data:[
+			      {
+				halfyearValue:1,
+				halfyearName:"上"
+					},
+				{
+					halfyearValue:2,
+					halfyearName:"下"
+					},
+				]
+		});
+		$("#end").combobox({
+			limitToList:true,
+			panelHeight:70,
+			valueField:"halfyearValue",
+			textField:"halfyearName",
+			data:[
+			      {
+				halfyearValue:1,
+				halfyearName:"上"
+					},
+				{
+					halfyearValue:2,
+					halfyearName:"下"
+					},
+				]
+		});
+	}else if(restage==2){
+		startStr="第<input id='start'  class='easyui-combobox' name='start' editable='false' style='height:25px;width:80px;'> <label for='start' style='height:25px;width:40px;'>季度</label>";
+		endStr="第<input id='end'  class='easyui-combobox' name='end' editable='false' style='height:25px;width:80px;'> <label for='end' style='height:25px;width:40px;'>季度</label>";
+		var seasonArg=[
+			            {
+				    	  startSeason:1,
+				    	  startSeasonName:1
+						},
+						{
+							startSeason:2,
+							startSeasonName:2
+						},
+						{
+							startSeason:3,
+							startSeasonName:3
+						},
+						{
+							startSeason:4,
+							startSeasonName:4
+						},
+						];
+		$("#startyear").after(startStr);
+		$("#endyear").after(endStr);
+		$("#start").combobox({
+			limitToList:true,
+			panelHeight:70,
+			valueField:"startSeason",
+			textField:"startSeasonName",
+			data:seasonArg
+		});
+		$("#end").combobox({
+			limitToList:true,
+			panelHeight:70,
+			valueField:"startSeason",
+			textField:"startSeasonName",
+			data:seasonArg
+		});
+	}else if(restage==3){
+		startStr="<input id='start'  class='easyui-combobox' name='start' editable='false' style='height:25px;width:80px;'> <label for='start' style='height:25px;width:40px;'>月</label>";
+		endStr="<input id='end'  class='easyui-combobox' name='end' editable='false' style='height:25px;width:80px;'> <label for='end' style='height:25px;width:40px;'>月</label>";
+		var monthArg=new Array();
+		for(var i=1;i<=12;i++){
+			var mon={
+				startMonth:i,
+				startMonthName:i
+			};
+			monthArg.push(mon);
+		}
+		$("#startyear").after(startStr);
+		$("#endyear").after(endStr);
+		$("#start").combobox({
+			limitToList:true,
+			panelHeight:70,
+			valueField:"startMonth",
+			textField:"startMonthName",
+			data:monthArg
+		});
+		$("#end").combobox({
+			limitToList:true,
+			panelHeight:70,
+			valueField:"startMonth",
+			textField:"startMonthName",
+			data:monthArg
+		});
+	}
+});
+
+function submit(){
+	var start='';
+	var end='';
+	if($("#ruleStartYear").combobox('getValue')==null||$("#ruleStartYear").combobox('getValue')==''
+		||$("#ruleEndYear").combobox('getValue')==null||$("#ruleEndYear").combobox('getValue')==''){
+		layer.msg("时间未填写完整，请检查后再提交");
+		return;
+	}
+	if(restage!=0){
+		if($("#start").combobox('getValue')==null||$("#start").combobox('getValue')==''
+		||$("#end").combobox('getValue')==null||$("#end").combobox('getValue')==''){
+			layer.msg("时间未填写完整，请检查后再提交");
+			return;
+		}
+		if($("#ruleStartYear").combobox('getValue')==$("#ruleEndYear").combobox('getValue')&&$("#start").combobox('getValue')>$("#end").combobox('getValue')){
+			layer.msg("时间填写不规范，请检查后再提交");
+			return ;
+		}
+		start=$("#ruleStartYear").combobox('getValue')+","+$("#start").combobox('getValue');
+		end=$("#ruleEndYear").combobox('getValue')+","+$("#end").combobox('getValue');
+	}else{
+		start=''+$("#ruleStartYear").combobox('getValue');
+		end=''+$("#ruleEndYear").combobox('getValue');
+	}
+	var resultDialog = parent.sy.modalDialog({/*  打开一个对话框*/
+		id:"resultDialog",
+	 	title : "衍生报表生成结果", 		
+	 	url : "/rule/getRuleReportData?start="+start+"&end="+end+"&reid="+reid+"&restage="+restage+"&rename="+rename+"&restaid="+restaid,
+	 	modal:true,
+	}, 1150, 630);
+	parent.$("#chooseDialog").dialog('destroy');//关闭上一个对话框
+}
+
+function unSubmit(){
+	parent.$("#chooseDialog").dialog('destroy');//关闭上一个对话框
+}
+</script>
+</html>

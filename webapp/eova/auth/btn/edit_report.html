@@ -1,0 +1,38 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="editReport()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+/*var editChoose = function() {
+	var grid = $('#grid');
+	var row = grid.datagrid('getSelected');
+	if (isSelected(row)){
+		var dialog = parent.sy.modalDialog({// 打开一个对话框
+	 		title : '['+ row.name +']可用功能选择', 		
+	 		url : '/diyEdit/renderId/' + row.staid,
+	 		buttons : [ {
+	 			text : '确定',
+	 			handler : function(){
+	 				dialog.find('iframe').get(0).contentWindow.submitForm(dialog, grid, parent.$);
+	 			}
+	 		} ]
+	 	}, 800, 650);
+	}
+};*/
+var editReport = function() {
+	var grid = $('#grid');
+	var row = grid.datagrid('getSelected');
+	if (isSelected(row)){
+		var dialog = parent.sy.modalDialog({/*  打开一个对话框*/
+	 		title : '['+ row.staname +']表头编辑', 		
+	 		url : '/diyEdit/renderIdtoTree/' + row.staid,
+	 		buttons : [ {
+	 			text : '确认',
+	 			handler : function() {
+	 				dialog.dialog('destroy');
+	 			}
+	 		} ],
+	 	}, document.body.offsetWidth, document.body.offsetHeight);
+	}
+};
+</script>

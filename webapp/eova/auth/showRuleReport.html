@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>统计衍生报表数据展示</title>
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css">
+<link href='/css/gc.spread.sheets.10.1.3.css' rel='stylesheet' type='text/css'>
+<link href='/css/gc.spread.sheets.excel2013white.10.1.3.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="/ui/css/bootstrap.min.css" type="text/css">
+<link rel="stylesheet" href="/ui/linearicons/style.css" type="text/css">
+<script type='text/javascript' src='/ui/js/gc.spread.sheets.all.10.1.3.min.js' ></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/ui/layer/layer.js"></script>
+<script type="text/javascript" src="/ui/js/gc.spread.excelio.10.1.3.min.js"></script>
+<script type="text/javascript" src="/ui/js/gc.spread.sheets.print.10.1.3.min.js"></script>
+<script type="text/javascript" src="/ui/js/FileSaver.min.js"></script>
+<script type="text/javascript" src="/ui/js/resources.js"></script>
+<script src='/ui/js/gc.spread.sheets.resources.zh.10.2.0.min.js' type='text/javascript'></script>
+<script src="/ui/js/echarts_option.js" type='text/javascript'></script>
+</head>
+<body>
+	<div style="width:1100px; height: 580px;padding:15px;text-align:center;">
+		<div id="ruleReportExcel" style="position: relative; width: 1050px; height: 520px; border: 1px solid gray;">
+		</div>
+		<br>
+		<div>
+			<a href="#" class="easyui-linkbutton"
+				data-options="iconCls:'icon-redo'"
+				style="width: 180px; height: 25px" id="doExport">导出为excel</a>
+		</div>
+	</div>
+			<input id="mergeCells" type="hidden"></input> <input id="unmergeCells"
+			type="hidden"></input>
+		<ul id="spreadContextMenu" class="dropdown-menu" role="menu" style="display: none">
+			<li><a class="localize" data-action="cut">剪切</a></li>
+			<li><a class="localize" data-action="copy">复制</a></li>
+			<li><a class="localize" data-action="paste">粘贴</a></li>
+			<li class="context-header divider"></li>
+			<li class="context-header"><a class="localize"
+				data-action="insert">插入</a></li>
+			<li class="context-header"><a class="localize"
+				data-action="delete">删除</a></li>
+			<li class="context-cell divider"></li>
+			<li class="context-cell context-merge"><a class="localize"
+				data-action="merge">合并</a></li>
+			<li class="context-cell context-unmerge"><a class="localize"
+				data-action="unmerge">取消合并</a></li>
+		</ul>
+</body>
+<script type="text/javascript">
+var reheader=${reheader};
+var reformula=${reformula};
+var revalue=${revalue};
+_url = "";
+var spread;
+var spreadNS = GC.Spread.Sheets;
+var isSafari = (function() {
+	var tem, M = navigator.userAgent
+			.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i)
+			|| [];
+	if (!/trident/i.test(M[1]) && M[1] !== 'Chrome') {
+		M = M[2] ? [ M[1], M[2] ] : [ navigator.appName, navigator.appVersion,
+				'-?' ];
+		if ((tem = navigator.userAgent.match(/version\/(\d+)/i)) != null)
+			M.splice(1, 1, tem[1]);
+		return M[0].toLowerCase() === "safari";
+	}
+	return false;
+})();
+var isIE = navigator.userAgent.toLowerCase().indexOf('compatible') < 0
+		&& /(trident)(?:.*? rv ([\w.]+)|)/.exec(navigator.userAgent
+				.toLowerCase()) !== null;
+var indexdata;
+$(document).ready(
+		function() {
+			spread = new GC.Spread.Sheets.Workbook(document
+					.getElementById("ruleReportExcel"));// 初始化表
+			$("#ruleReportExcel").bind("contextmenu", processSpreadContextMenu);
+			$("#spreadContextMenu a").click(processContextMenuClicked);
+			$(document).on("contextmenu", function() {
+				event.preventDefault();
+				return false;
+			});
+
+			$("#doExport").click(function() {
+				exportToExcel();
+			});
+			var sheet=spread.getActiveSheet();
+			sheet.suspendPaint();
+			for(var i=0;i<reheader.length;i++){
+				var location=reheader[i].reheadlocation.split("@#");
+				var row=location[0];
+				var col=location[1];
+				sheet.addSpan(row,col,reheader[i].reheadrowspan,reheader[i].reheadcolspan);
+				sheet.setValue(row,col,reheader[i].reheadname);
+			}
+			for(var i=0;i<revalue.length;i++){
+				var location=revalue[i].position.split("@#");
+				var row=location[0];
+				var col=location[1];
+				sheet.setValue(row,col,revalue[i].value);
+			}
+			for(var i=0;i<reformula.length;i++){
+				var location=reformula[i].reflocation.split("@#");
+				var row=location[0];
+				var col=location[1];
+				sheet.setFormula(row,col,reformula[i].refcontent);
+			} 
+			sheet.resumePaint();
+});
+
+/**
+ * 用于报表中的各种操作
+ */
+function processSpreadContextMenu(e) {
+	// move the context menu to the position of the mouse point
+	//spread = $("#indexTable").data("workbook");
+	//console.log(spread);
+	var sheet = spread.getActiveSheet(), target = getHitTest(e.pageX, e.pageY,
+			sheet), hitTestType = target.hitTestType, row = target.row, col = target.col, selections = sheet
+			.getSelections();
+
+	var isHideContextMenu = false;
+
+	if (hitTestType === GC.Spread.Sheets.SheetArea.colHeader) {
+		if (getCellInSelections(selections, row, col) === null) {
+			sheet.setSelection(-1, col, sheet.getRowCount(), 1);
+		}
+		if (row !== undefined && col !== undefined) {
+			$(".context-header").show();
+			$(".context-cell").hide();
+		}
+	} else if (hitTestType === GC.Spread.Sheets.SheetArea.rowHeader) {
+		if (getCellInSelections(selections, row, col) === null) {
+			sheet.setSelection(row, -1, 1, sheet.getColumnCount());
+		}
+		if (row !== undefined && col !== undefined) {
+			$(".context-header").show();
+			$(".context-cell").hide();
+		}
+	} else if (hitTestType === GC.Spread.Sheets.SheetArea.viewport) {
+		if (getCellInSelections(selections, row, col) === null) {
+			sheet.clearSelection();
+			sheet.endEdit();
+			sheet.setActiveCell(row, col);
+			updateMergeButtonsState();
+		}
+		updateMergeButtonsState();
+		if (row !== undefined && col !== undefined) {
+			$(".context-header").hide();
+			$(".context-cell").hide();
+			showMergeContextMenu();
+		} else {
+			isHideContextMenu = true;
+		}
+	} else if (hitTestType === GC.Spread.Sheets.SheetArea.corner) {
+		sheet.setSelection(-1, -1, sheet.getRowCount(), sheet.getColumnCount());
+		if (row !== undefined && col !== undefined) {
+			$(".context-header").hide();
+			$(".context-cell").show();
+		}
+	}
+
+	var $contextMenu = $("#spreadContextMenu");
+	$contextMenu.data("sheetArea", hitTestType);
+	if (isHideContextMenu) {
+		hideSpreadContextMenu();
+	} else {
+		$contextMenu.css({
+			left : e.pageX,
+			top : e.pageY
+		});
+		$contextMenu.show();
+		$(document).on("click.contextmenu", function() {
+			if ($(event.target).parents("#spreadContextMenu").length === 0) {
+				hideSpreadContextMenu();
+			}
+		});
+	}
+}
+
+// 右键菜单点击触发
+function processContextMenuClicked() {
+	//spread = $("#indexTable").data("workbook");
+	var action = $(this).data("action");
+//	alert(action);
+	var sheet = spread.getActiveSheet();
+	var sheetArea = $("#spreadContextMenu").data("sheetArea");
+
+	hideSpreadContextMenu();
+
+	switch (action) {
+	case "cut":
+		spread.commandManager().execute({
+			cmd : "cut",
+			sheetName : sheet.name()
+		});
+		break;
+	case "copy":
+		spread.commandManager().execute({
+			cmd : "copy",
+			sheetName : sheet.name()
+		});
+		break;
+	case "paste":
+		spread.commandManager().execute({
+			cmd : "paste",
+			sheetName : sheet.name()
+		});
+		break;
+	case "insert":
+		if (sheetArea === GC.Spread.Sheets.SheetArea.colHeader) {
+			sheet.addColumns(sheet.getActiveColumnIndex(), 1);
+		} else if (sheetArea === GC.Spread.Sheets.SheetArea.rowHeader) {
+			sheet.addRows(sheet.getActiveRowIndex(), 1);
+		}
+		break;
+	case "delete":
+		if (sheetArea === GC.Spread.Sheets.SheetArea.colHeader) {
+			sheet.deleteColumns(sheet.getActiveColumnIndex(), 1);
+		} else if (sheetArea === GC.Spread.Sheets.SheetArea.rowHeader) {
+			sheet.deleteRows(sheet.getActiveRowIndex(), 1);
+		}
+		break;
+	case "merge":
+		var sel = sheet.getSelections();
+		if (sel.length > 0) {
+			sel = sel[sel.length - 1];
+			sheet.addSpan(sel.row, sel.col, sel.rowCount, sel.colCount,
+					GC.Spread.Sheets.SheetArea.viewport);
+		}
+		updateMergeButtonsState();
+		break;
+	case "unmerge":
+		var sels = sheet.getSelections();
+		for (var i = 0; i < sels.length; i++) {
+			var sel = getActualCellRange(sels[i], sheet.getRowCount(), sheet
+					.getColumnCount());
+			for (var r = 0; r < sel.rowCount; r++) {
+				for (var c = 0; c < sel.colCount; c++) {
+					var span = sheet.getSpan(r + sel.row, c + sel.col,
+							GC.Spread.Sheets.SheetArea.viewport);
+					if (span) {
+						sheet.removeSpan(span.row, span.col,
+								GC.Spread.Sheets.SheetArea.viewport);
+					}
+				}
+			}
+		}
+		updateMergeButtonsState();
+		break;
+	default:
+		break;
+	}
+}
+function hideSpreadContextMenu() {
+	$("#spreadContextMenu").hide();
+	$(document).off("click.contextmenu");
+}
+
+function updateMergeButtonsState() {
+	//spread = $("#indexTable").data("workbook");
+	var sheet = spread.getActiveSheet();
+	var sels = sheet.getSelections(), mergable = false, unmergable = false;
+
+	sels.forEach(function(range) {
+				var ranges = sheet.getSpans(range), spanCount = ranges.length;
+
+				if (!mergable) {
+					if (spanCount > 1
+							|| (spanCount === 0 && (range.rowCount > 1 || range.colCount > 1))) {
+						mergable = true;
+					} else if (spanCount === 1) {
+						var range2 = ranges[0];
+						if (range2.row !== range.row
+								|| range2.col !== range.col
+								|| range2.rowCount !== range2.rowCount
+								|| range2.colCount !== range.colCount) {
+							mergable = true;
+						}
+					}
+				}
+				if (!unmergable) {
+					unmergable = spanCount > 0;
+				}
+			});
+
+	$("#mergeCells").attr("disabled", mergable ? null : "disabled");
+	$("#unmergeCells").attr("disabled", unmergable ? null : "disabled");
+}
+
+function getHitTest(pageX, pageY, sheet) {
+	var offset = $("#ruleReportExcel").offset(), x = pageX - offset.left, y = pageY
+			- offset.top;
+	return sheet.hitTest(x, y);
+}
+
+function getCellInSelections(selections, row, col) {
+	var count = selections.length, range;
+	for (var i = 0; i < count; i++) {
+		range = selections[i];
+		if (range.contains(row, col)) {
+			return range;
+		}
+	}
+	return null;
+}
+
+function getActualCellRange(cellRange, rowCount, columnCount) {
+	if (cellRange.row === -1 && cellRange.col === -1) {
+		return new spreadNS.Range(0, 0, rowCount, columnCount);
+	} else if (cellRange.row === -1) {
+		return new spreadNS.Range(0, cellRange.col, rowCount,
+				cellRange.colCount);
+	} else if (cellRange.col === -1) {
+		return new spreadNS.Range(cellRange.row, 0, cellRange.rowCount,
+				columnCount);
+	}
+
+	return cellRange;
+}
+
+function showMergeContextMenu() {
+	// use the result of updateMergeButtonsState
+	if ($("#mergeCells").attr("disabled")) {
+		$(".context-merge").hide();
+	} else {
+		$(".context-cell.divider").show();
+		$(".context-merge").show();
+	}
+
+	if ($("#unmergeCells").attr("disabled")) {
+		$(".context-unmerge").hide();
+	} else {
+		$(".context-cell.divider").show();
+		$(".context-unmerge").show();
+	}
+}
+
+function exportToExcel() {
+	//spread = $("#ruleReportExcel").data("workbook");
+	var excelIO = new GC.Spread.Excel.IO();
+	var fileName = getFileName();
+	var json = spread.toJSON({
+		includeBindingSource : true
+	});
+	excelIO.save(json, function(blob) {
+		if (isSafari) {
+			var reader = new FileReader();
+			reader.onloadend = function() {
+				showModal(uiResource.toolBar.downloadTitle,
+						DOWNLOAD_DIALOG_WIDTH, $("#downloadDialog").children(),
+						function() {
+							$("#downloadDialog").hide();
+						});
+				var link = $("#download");
+				link[0].href = reader.result;
+			};
+			reader.readAsDataURL(blob);
+		} else {
+			saveAs(blob, fileName + ".xlsx");
+		}
+	}, function(e) {
+		alert(e);
+	});
+}
+
+function getFileName() {
+	function to2DigitsString(num) {
+		return ("0" + num).substr(-2);
+	}
+	var date = new Date();
+	return [ "export", date.getFullYear(),
+			to2DigitsString(date.getMonth() + 1),
+			to2DigitsString(date.getDate()), to2DigitsString(date.getHours()),
+			to2DigitsString(date.getMinutes()),
+			to2DigitsString(date.getSeconds()) ].join("");
+}
+</script>
+</html>

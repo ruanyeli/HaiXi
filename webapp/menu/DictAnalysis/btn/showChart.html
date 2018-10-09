@@ -1,0 +1,23 @@
+<a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'${button.icon!}',plain:true"
+onclick="showChart()">
+	${button.name!}
+</a>
+<script type="text/javascript">
+var showChart = function() {
+	var dict_name = $("[name='query_dict_name']").val();
+	if(dict_name != ''){
+		var grid = $('#grid');
+		var rows = grid.datagrid('getRows');
+		if(rows.length>0){
+			var dialog = parent.sy.modalDialog({/*  打开一个对话框*/
+			 	title : "字典库分析图表展示", 		
+			 	url : encodeURI('/excel/showDictChart?rows='+JSON.stringify(rows))
+			}, 800, 500);
+		}else{
+			$.slideMsg("无记录，无法生成图表！");
+		}
+	}else{
+		$.slideMsg("请选择字典！！！");
+	}
+};
+</script>

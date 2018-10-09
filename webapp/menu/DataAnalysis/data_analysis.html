@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="renderer" content="webkit">
+<link rel="stylesheet" type="text/css"
+	href="/plugins/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css"
+	href="/plugins/easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/plugins/eovaicon/icon.css">
+<link href="/plugins/My97DatePicker/skin/WdatePicker.css"
+	rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="/eova/htmltag/eova_tag.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/common.css">
+<link rel="stylesheet" type="text/css" href="/ui/eova/css/eova.css">
+<link rel="stylesheet" type="text/css" href="/ui/css/jsc/qzjjqkbz.css">
+<script type="text/javascript" src="/ui/js/jquery.min.js"></script>
+
+<script type="text/javascript"
+	src="/plugins/easyui/jquery.easyui.min.js"></script>
+
+<script type="text/javascript"
+	src="/plugins/My97DatePicker/WdatePicker.js"></script>
+
+<script type="text/javascript" charset="utf-8"
+	src="/menu/DataAnalysis/data_analysis.js"></script>
+<script type="text/javascript" src="/ui/js/echarts.min.js"></script>
+<title>公报生成</title>
+</head>
+<body class="easyui-layout ">
+	<div class="panel layout-panel layout-panel-north layout-split-north"
+		style="left: 0px; top: 0px; width: 100%;">
+		<div class="panel-header">
+			<div class="panel-title">快速查询</div>
+			<div class="panel-tool">
+				<a class="panel-tool-collapse" href="javascript:void(0)"
+					style="display: none;"></a>
+			</div>
+		</div>
+
+		<div id="allContainer" class="allContainer">
+			<div id="layoutNorth" region="north" title="" split="true"
+				style="height: 35px; width: 100%;" class="panel-body layout-body">
+				<form id="queryForm" onsubmit="return false;"
+					class="nice-validator n-default" novalidate="novalidate">
+					<div id="eova-query" class="eova-form">
+
+						<div class="eova-form-field" title="" style="width: 20%">
+							<div class="eova-form-lbl" style="text-align: center">选择年:</div>
+							<div>
+								<div class="eova-text" id="nickname" data-options=""
+									style="height: 24px;">
+									<input type="text" id="year" onClick="WdatePicker({dateFmt:'yyyy'})" />
+								</div>
+							</div>
+						</div>
+						<div class="eova-form-field" title="" style="width: 20%">
+							<div class="eova-form-lbl" style="text-align: center">选择季度:</div>
+							<div>
+								<div class="eova-text" id="nickname" data-options=""
+									style="height: 24px;">
+									<select id="season" style="width: 150px; height: 25px; line-height: 25px;">
+										<option>请选择季度</option>
+										<option value='1'>第一季度</option>
+										<option value='2'>第二季度</option>
+										<option value='3'>第三季度</option>
+										<option value='4'>第四季度</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="eova-form-field" title="" style="width: 20%">
+							<div class="eova-form-lbl" style="text-align: center">选择月:</div>
+							<div>
+								<div class="eova-text" id="nickname" data-options=""
+									style="height: 24px;">
+									<select id="month" style="width: 150px; height: 25px; line-height: 25px;">
+										<option>请选择月份</option>
+										<option value='1'>1月</option>
+										<option value='2'>2月</option>
+										<option value='3'>3月</option>
+										<option value='4'>4月</option>
+										<option value='5'>5月</option>
+										<option value='6'>6月</option>
+										<option value='7'>7月</option>
+										<option value='8'>8月</option>
+										<option value='9'>9月</option>
+										<option value='10'>10月</option>
+										<option value='11'>11月</option>
+										<option value='12'>12月</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="eova-form-field" title="" style="width: 20%">
+							<div class="eova-form-lbl" style="text-align: center">选择模板:</div>
+							<div>
+								<div id="nickname" data-options="">
+									<select style="width: 150px; height: 25px; line-height: 25px;"
+										id="communique">
+										<option>请选择</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="eova-form-field" title="" style="width: 5%">
+
+							<div>
+								&nbsp;&nbsp;<a href="#" class="easyui-linkbutton"
+									iconCls="icon-search" onclick="submit()">查询</a>
+
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div class="panel-header">
+				<div class="panel-title">展示区</div>
+				<div class="panel-tool">
+					<a class="panel-tool-collapse" href="javascript:void(0)"
+						style="display: none;"></a>
+				</div>
+			</div>
+
+			<div id="zhangcontainer" class="zhangcontainer" style="width: 98%">
+				<div id="show" style="width: 100%; height: 100%"></div>
+			</div>
+
+
+
+		</div>
+	</div>
+	<script type="text/javascript">
+		var winHeight;
+		
+		$(document).ready(function() {
+
+			findDimensions();
+
+		});
+		
+		$(window).resize(function() {
+			findDimensions();
+		});
+
+		function findDimensions() { //函数：获取尺寸
+			//获取窗口高度
+			if (window.innerHeight) {
+
+				winHeight = window.innerHeight;
+
+			} else if ((document.body) && (document.body.clientHeight)) {
+
+				winHeight = document.body.clientHeight;
+
+			}
+			//通过深入Document内部对body进行检测，获取窗口大小
+
+			if (document.documentElement
+					&& document.documentElement.clientHeight
+					&& document.documentElement.clientWidth) {
+
+				winHeight = document.documentElement.clientHeight;
+			}
+
+			if (document.getElementById("zhangcontainer")) {
+
+				document.getElementById("zhangcontainer").style.height = winHeight
+						* 0.90 + "px";
+
+			}
+
+		}
+	</script>
+</body>
+</html>

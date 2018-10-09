@@ -1,0 +1,62 @@
+<!doctype html>
+<html style="height:100%;font-size:14px;">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/ui/css/gc.spread.views.dataview.10.1.2.css">
+    <script src="/ui/js/gc.spread.common.10.1.2.min.js" type="text/javascript"></script>
+    <script src="/ui/js/gc.spread.views.dataview.10.1.2.min.js" type="text/javascript"></script>
+    <script src="/ui/js/gc.spread.views.gridlayout.10.1.2.min.js" type="text/javascript"></script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+    </style>
+<script src="/ui/js/jquery-1.11.0.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/ui/js/common.js"></script>
+<script type="text/javascript" src="/ui/js/jquery.min.js"></script>
+<script type="text/javascript" src="/ui/js/json2-min.js"></script>
+<script type="text/javascript" src="/ui/js/json2.js"></script>
+</head>
+
+<body style="margin:8px;position:absolute;top:0;bottom:0;left:0;right:0;font-size:14px;">
+    <div id="grid1" style="height:100%;"></div> 
+    <script type="text/javascript">
+var statementid=${tableid};
+var stageid=${stageid};
+/* alert(statementid);
+alert(stageid); */
+var _datas={
+		"statementid":statementid,
+		"stageid":stageid
+};
+
+$.ajax({
+    url:'/diyMenu/sendReportData',
+    data:_datas,
+    type:'post',
+    success:function(response){
+    	
+    	if(response.resultCode=="0")
+        {
+            var columns=response.data.columns;
+            console.log(columns);
+            var _dataList=response.data.dataList;
+            var dataView = new GC.Spread.Views.DataView(document.getElementById('grid1'), _dataList, columns, new GC.Spread.Views.Plugins.GridLayout({
+                allowEditing: true,
+                colMinWidth: 120
+            }));
+            //focus data.view by default
+            document.querySelector('#grid1').focus();			
+        }else{
+            alert(response.resultDesc);
+        }
+    }
+});
+
+    </script>
+    
+    
+</body>
+
+</html>
